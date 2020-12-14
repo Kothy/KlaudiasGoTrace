@@ -1,0 +1,50 @@
+[
+    {
+        "Time": 79032,
+        "Command": "GoroutineStart",
+        "Id": 1,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 165201,
+        "Command": "GoroutineStart",
+        "Id": 20,
+        "ParentId": 1,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 11985741,
+        "Command": "GoroutineEnd",
+        "Id": 20,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 11994564,
+        "Command": "GoroutineEnd",
+        "Id": 1,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    }
+]
