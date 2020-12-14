@@ -1,0 +1,74 @@
+[
+    {
+        "Time": 48435,
+        "Command": "GoroutineStart",
+        "Id": 1,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 9638491,
+        "Command": "GoroutineStart",
+        "Id": 18,
+        "ParentId": 1,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 23788018,
+        "Command": "GoroutineSend",
+        "Id": 18,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "Rk6CYwyrzc",
+        "Value": "42",
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 23812097,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "Rk6CYwyrzc",
+        "Value": "nil",
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 33595317,
+        "Command": "GoroutineEnd",
+        "Id": 18,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    },
+    {
+        "Time": 124248738,
+        "Command": "GoroutineEnd",
+        "Id": 1,
+        "ParentId": 0,
+        "From": "",
+        "To": "",
+        "Channel": "",
+        "Value": null,
+        "EventID": "",
+        "Duration": 0
+    }
+]
