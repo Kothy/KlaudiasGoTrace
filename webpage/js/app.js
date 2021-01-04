@@ -29,6 +29,15 @@ class Goroutine {
 		this.vecStart = null;
 		this.vecEnd = null;
 		this.len = 0
+		this.children = [];
+		this.depth = 0;
+	}
+	setDepth(d) {
+		this.depth = d;
+	}
+
+	setChildren(ch){
+		this.children = ch;
 	}
 
 	setEnd(end){
@@ -107,6 +116,8 @@ function loadJson2(){
 			goroutines = [];
 			objects = [];
 			var timeDiff;
+			var len20 = false;
+			var len10 = false;
 			for (var i = 0; i < jsonArray.length; i++) {
 				var obj = jsonArray[i];
 				if (obj.Command === "GoroutineStart"){
@@ -120,9 +131,18 @@ function loadJson2(){
 					g.vecEnd = new THREE.Vector3(0, endY, 0);
 					g.vecStart = new THREE.Vector3(0, startY, 0);
 					g.len = Math.abs(endY - startY);
+					if (g.len > 20.0) {
+						lenght20 = true;
+						console.log("Vacsie ako 20", g.len);
+
+					}
+					if (g.len > 10.0) {
+						len10 = true;
+						console.log("Vacsie ako 10", g.len);
+					}
 				}
 			}
-
+			var max_len = 0
 			var x = 0;
 			for (var i = 0; i < goroutines.length; i++) {
 					var g = goroutines[i];
@@ -131,9 +151,71 @@ function loadJson2(){
 					g.vecStart.x = x;
 					g.vecEnd.x = x;
 					x += 1.2;
-					console.log(g);
+					if (len20) {
+						g.vecEnd.y = g.vecEnd.y / 6
+						g.len = g.vecEnd.y
+					} else if (len10) {
+						g.vecEnd.y = g.vecEnd.y / 4
+						g.len = g.vecEnd.y
+					}
+					if (max_len < Math.abs(g.len)) {
+						max_len = Math.abs(g.len)
+					}
+					var children = findChildren(g);
+					g.setChildren(children);
+
+					//console.log(g);
 		}
+		setDepths(goroutines[0], 0);
+
+		for (var i = 0; i < goroutines.length; i++) {
+				var g = goroutines[i];
+
+				console.log(g);
+		}
+
+		camera.position.x = 0;
+		camera.position.y = -(max_len/2);
+		camera.position.z = 10;
+
+		camera.lookAt(0, -(max_len/2), -1);
+		setControls();
+
+
 		drawAllGoroutines();
+}
+
+function setDepths(g, d) {
+	g.setDepth(depth(g, d));
+	for (var i = 0; i < g.children.length; i++) {
+			var child = g.children[i];
+			setDepths(child, d - 1);
+	}
+}
+
+function depth(g, d){
+		if (g.children.length == 0) {
+			return d;
+		}
+		depths = [];
+		for (var i = 0; i < g.children.length; i++) {
+				var child = g.children[i];
+				depths.push(depth(child, d + 1));
+		}
+		return Math.max(...depths);
+}
+
+function findChildren(goroutine) {
+		var children = [];
+
+		gid = goroutine.id;
+		for (var i = 0; i < goroutines.length; i++) {
+				if (goroutines[i].parentId == gid){
+					children.push(goroutines[i]);
+				}
+		}
+		//console.log(children);
+		return children;
 }
 
 function drawAllGoroutines() {
@@ -141,7 +223,7 @@ function drawAllGoroutines() {
 		for (var i = 0; i < goroutines.length; i++) {
 				var g = goroutines[i];
 				//drawSimpleLine(g.vecStart, g.vecEnd);
-				drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS)
+				drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue")
 				var name = g.id == 1 ? 'main' : "#" + g.id;
 				drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
 							g.vecStart.z, 0.35, 0.003, "purple");
@@ -151,19 +233,44 @@ function drawAllGoroutines() {
 					var x2 = g.vecStart.x;
 					var y2 = g.vecStart.y;
 					var z = g.parent.vecStart.z;
-					drawSimpleLine(g.vecStart, new THREE.Vector3(x1 ,y1, z));
-					drawSimpleLine(g.vecEnd, new THREE.Vector3(x1 ,g.vecEnd.y, g.vecEnd.z));
+					drawSimpleLine(g.vecStart, new THREE.Vector3(x1 ,y1, z), "green");
+					drawSimpleLine(g.vecEnd, new THREE.Vector3(x1 ,g.vecEnd.y, g.vecEnd.z), "green");
 				}
 		}
 }
 
-/*function pointsDistance(x1, y1, x2, y2){
-	var a = x1 - x2;
-	var b = y1 - y2;
+function toRadians(degrees) {
+		return degrees * (Math.PI/180);
+}
 
-	var distance = Math.sqrt(a*a + b*b);
-	return distance
-}*/
+Math.radians = function(degrees) {
+	return degrees * Math.PI / 180;
+}
+
+Math.degrees = function(radians) {
+	return radians * 180 / Math.PI;
+}
+
+function drawAllGoroutines2(parts) {
+	 	var vecStart = new THREE.Vector3(0, 0, 0);
+		var vecEnd = new THREE.Vector3(0, -3, 0);
+		var x = vecStart.x;
+		var y1 = vecStart.y;
+		var y2 = vecEnd.y;
+		var z = vecStart.z;
+		drawLineWithThickness(vecStart, vecEnd, 0.03, "purple");
+
+		var deg = 0;
+		for (var i = 0; i <= parts; i++) {
+			var x2 = x + (Math.cos(Math.radians(deg)) * 2.5);
+			var z2 = z + (Math.sin(Math.radians(deg)) * 2.5);
+			console.log(x2, z2);
+			var start = new THREE.Vector3(x2, y1, z2);
+			var end = new THREE.Vector3(x2, y2, z2);
+			drawLineWithThickness(start, end, 0.03, "black");
+			deg += (360 / parts);
+		}
+}
 
 function getGoroutineById(id) {
 	for (var i = 0; i < goroutines.length; i++) {
@@ -174,7 +281,7 @@ function getGoroutineById(id) {
 	return null;
 }
 
-function drawLineWithThickness(startV, endV, thick) {
+function drawLineWithThickness(startV, endV, thick, color) {
 		let len = startV.distanceTo(endV);
 		let x1 = startV.x;
 		let y1 = startV.y;
@@ -186,7 +293,7 @@ function drawLineWithThickness(startV, endV, thick) {
 		let midY = (y1 + y2) / 2;
 		let midZ = (z1 + z2) / 2;
 		const geometry = new THREE.CylinderGeometry(thick, thick, len, 35);
-		const material = new THREE.MeshBasicMaterial({color: "blue"});
+		const material = new THREE.MeshBasicMaterial({color: color});
 		const cylinder = new THREE.Mesh(geometry, material);
 
 		cylinder.position.x = midX;
@@ -196,9 +303,9 @@ function drawLineWithThickness(startV, endV, thick) {
 		scene.add(cylinder);
 }
 
-function drawSimpleLine(start, end){
+function drawSimpleLine(start, end, color){
 		const material = new THREE.LineBasicMaterial({
-				color: "blue"
+				color: color
 		});
 
 		const points = [];
@@ -270,10 +377,12 @@ function drawScene(){
 
 function setScene(){
 	var scene = new THREE.Scene();
-	scene.background = new THREE.Color("rgb(191, 201, 194)");
+	scene.background = new THREE.Color("rgb(255, 255, 255)");
 	// "rgb(60, 222, 211)" - modrozelena
 	// "rgb(255, 255, 255)" - biela
 	// "rgb(191, 201, 194)" - slabo siva
+	//var axesHelper = new THREE.AxesHelper( 5 );
+	//scene.add(axesHelper);
 	return scene;
 }
 
@@ -288,14 +397,20 @@ function setCamera(){
 	width = window.innerWidth;
 	height = window.innerHeight - WINDOW_CUT;
 	var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-	camera.position.z = 5;
+	camera.position.z = 6;
 	//camera.position.x = -3;
-	camera.lookAt(0, 0, 0);
+	camera.lookAt(0, -5, 0);
 	return camera
 }
 
 function setCameraPos(z) {
 		camera.position.z = z;
+}
+
+function printCamera(){
+		var lookAtVector = new THREE.Vector3(0,0, -1);
+		lookAtVector.applyQuaternion(camera.quaternion);
+		console.log(lookAtVector);
 }
 
 function setWindow(){
