@@ -12,16 +12,18 @@ import (
 	"runtime/trace"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
 var traceFileName string
-var commands [] *Command
-var channels [] *Chan
+var commands []*Command
+var channels []*Chan
+var mutex = &sync.Mutex{}
 
 type Chan struct {
-	Name	string
-	Ch chan int
+	Name string
+	Ch   chan int
 }
 
 type Command struct {
@@ -55,7 +57,7 @@ func StartTrace() {
 	if err != nil {
 		panic(err)
 	}
-	trace.Start(f)
+	_ = trace.Start(f)
 	StartGoroutine(0)
 }
 
@@ -75,15 +77,19 @@ func SendToChannel(value interface{}, channel chan int) {
 }
 
 func findChannel(ch chan int) string {
+	mutex.Lock()
 	for _, val := range channels {
-		if (val.Ch == ch) {
+		if val.Ch == ch {
+			mutex.Unlock()
 			return val.Name
 		}
 	}
+	mutex.Unlock()
 	return ""
 }
 
-func createChannel(ch chan int) string{
+func createChannel(ch chan int) string {
+	mutex.Lock()
 	chanName := randomString()
 	for isName(chanName) {
 		chanName = randomString()
@@ -92,6 +98,7 @@ func createChannel(ch chan int) string{
 		Name: chanName,
 		Ch:   ch,
 	})
+	mutex.Unlock()
 	return chanName
 }
 
@@ -106,7 +113,7 @@ func isName(value string) bool {
 
 func ReceiveFromChannel(value interface{}, channel chan int) {
 	chanName := findChannel(channel)
-	Log(fmt.Sprintf("%v", value)+"_"+chanName,"GoroutineReceive")
+	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
 
 }
 
@@ -134,7 +141,7 @@ func StopGoroutine() {
 
 func endGoroutinesManually(goroutines map[int64]bool, commands []*Command, mainEndCmd Command) []*Command {
 	for gID, isEnded := range goroutines {
-		if ! isEnded {
+		if !isEnded {
 			cmd := Command{
 				Time:     mainEndCmd.Time,
 				Command:  "GoroutineEnd",
@@ -157,7 +164,7 @@ func toJson(events []*Event) {
 			fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
 			comm := event.strArgs[1]
-			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd"){
+			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd") {
 				parentId64 := int64(parentId)
 				cmd := Command{
 					Time:     event.Timestmp,
@@ -187,11 +194,11 @@ func toJson(events []*Event) {
 				}
 				channel := args[1]
 				cmd := Command{
-					Time:     event.Timestmp,
-					Command:  event.strArgs[1],
-					Id:       int64(event.GorutineId),
-					Channel:  channel,
-					Value: 	  value,
+					Time:    event.Timestmp,
+					Command: event.strArgs[1],
+					Id:      int64(event.GorutineId),
+					Channel: channel,
+					Value:   value,
 				}
 				commands = append(commands, &cmd)
 			}
