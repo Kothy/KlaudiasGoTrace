@@ -18,6 +18,7 @@ ONE_FRAME = 0.0000001;
 var loader;
 var font;
 let THICKNESS = 0.02;
+let MAXLEN = 10;
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -116,8 +117,8 @@ function loadJson2(){
 			goroutines = [];
 			objects = [];
 			var timeDiff;
-			var len20 = false;
-			var len10 = false;
+			var max_len = 0;
+
 			for (var i = 0; i < jsonArray.length; i++) {
 				var obj = jsonArray[i];
 				if (obj.Command === "GoroutineStart"){
@@ -131,42 +132,36 @@ function loadJson2(){
 					g.vecEnd = new THREE.Vector3(0, endY, 0);
 					g.vecStart = new THREE.Vector3(0, startY, 0);
 					g.len = Math.abs(endY - startY);
-					if (g.len > 20.0) {
-						lenght20 = true;
-						console.log("Vacsie ako 20", g.len);
 
-					}
-					if (g.len > 10.0) {
-						len10 = true;
-						console.log("Vacsie ako 10", g.len);
+					if (max_len < Math.abs(g.len)) {
+						max_len = Math.abs(g.len)
 					}
 				}
 			}
-			var max_len = 0
-			var x = 0;
+			var div = 0;
+			if ((max_len / MAXLEN) < 1) {
+					div = 1;
+			} else {
+				div = (max_len / MAXLEN);
+			}
+
+			max_len = 0;
 			for (var i = 0; i < goroutines.length; i++) {
 					var g = goroutines[i];
 					parent = getGoroutineById(g.parentId);
 					g.parent = parent;
-					g.vecStart.x = x;
-					g.vecEnd.x = x;
-					x += 1.2;
-					if (len20) {
-						g.vecEnd.y = g.vecEnd.y / 6
-						g.len = g.vecEnd.y
-					} else if (len10) {
-						g.vecEnd.y = g.vecEnd.y / 4
-						g.len = g.vecEnd.y
-					}
+
+					g.vecEnd.y = g.vecEnd.y / div;
+					g.vecStart.y = g.vecStart.y / div;
+					g.len = g.vecEnd.y;
+					g.len = Math.abs(g.vecEnd.y - g.vecStart.y);
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)
 					}
 					var children = findChildren(g);
 					g.setChildren(children);
-
-					//console.log(g);
 		}
-		setDepths(goroutines[0], 0);
+		setDepths(getGoroutineById(1), 0);
 
 		for (var i = 0; i < goroutines.length; i++) {
 				var g = goroutines[i];
@@ -174,22 +169,30 @@ function loadJson2(){
 				console.log(g);
 		}
 
+		// camera.position.x = 0;
+		// camera.position.y = -(max_len/2);
+		// camera.position.z = 10;
+		//
+		// camera.lookAt(0, -(max_len/2), -1);
+		// setControls();
+
+		// console.log("Zacal som kreslit");
+		drawAllGoroutines3(getGoroutineById(1));
+		// console.log("Dokreslil som");
+
 		camera.position.x = 0;
 		camera.position.y = -(max_len/2);
 		camera.position.z = 10;
 
 		camera.lookAt(0, -(max_len/2), -1);
 		setControls();
-
-
-		drawAllGoroutines();
 }
 
 function setDepths(g, d) {
 	g.setDepth(depth(g, d));
 	for (var i = 0; i < g.children.length; i++) {
 			var child = g.children[i];
-			setDepths(child, d - 1);
+			setDepths(child, 0);
 	}
 }
 
@@ -214,30 +217,30 @@ function findChildren(goroutine) {
 					children.push(goroutines[i]);
 				}
 		}
-		//console.log(children);
+		// console.log(children);
+		// console.log("drawAllGoroutines3(goroutines[0]);");
 		return children;
 }
 
-function drawAllGoroutines() {
-		clearScene();
-		for (var i = 0; i < goroutines.length; i++) {
-				var g = goroutines[i];
-				//drawSimpleLine(g.vecStart, g.vecEnd);
-				drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue")
-				var name = g.id == 1 ? 'main' : "#" + g.id;
-				drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
-							g.vecStart.z, 0.35, 0.003, "purple");
-				if (g.id > 1) {
-					var x1 = g.parent.vecStart.x;
-					var y1 = g.vecStart.y;
-					var x2 = g.vecStart.x;
-					var y2 = g.vecStart.y;
-					var z = g.parent.vecStart.z;
-					drawSimpleLine(g.vecStart, new THREE.Vector3(x1 ,y1, z), "green");
-					drawSimpleLine(g.vecEnd, new THREE.Vector3(x1 ,g.vecEnd.y, g.vecEnd.z), "green");
-				}
-		}
-}
+// function drawAllGoroutines() {
+// 		clearScene();
+// 		for (var i = 0; i < goroutines.length; i++) {
+// 				var g = goroutines[i];
+// 				drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue")
+// 				var name = g.id == 1 ? 'main' : "#" + g.id;
+// 				drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
+// 							g.vecStart.z, 0.35, 0.003, "purple");
+// 				if (g.id > 1) {
+// 					var x1 = g.parent.vecStart.x;
+// 					var y1 = g.vecStart.y;
+// 					var x2 = g.vecStart.x;
+// 					var y2 = g.vecStart.y;
+// 					var z = g.parent.vecStart.z;
+// 					drawSimpleLine(g.vecStart, new THREE.Vector3(x1 ,y1, z), "green");
+// 					drawSimpleLine(g.vecEnd, new THREE.Vector3(x1 ,g.vecEnd.y, g.vecEnd.z), "green");
+// 				}
+// 		}
+// }
 
 function toRadians(degrees) {
 		return degrees * (Math.PI/180);
@@ -251,24 +254,61 @@ Math.degrees = function(radians) {
 	return radians * 180 / Math.PI;
 }
 
-function drawAllGoroutines2(parts) {
-	 	var vecStart = new THREE.Vector3(0, 0, 0);
-		var vecEnd = new THREE.Vector3(0, -3, 0);
+// function drawAllGoroutines2(parts) {
+// 	 	var vecStart = new THREE.Vector3(0, 0, 0);
+// 		var vecEnd = new THREE.Vector3(0, -3, 0);
+// 		var x = vecStart.x;
+// 		var y1 = vecStart.y;
+// 		var y2 = vecEnd.y;
+// 		var z = vecStart.z;
+// 		drawLineWithThickness(vecStart, vecEnd, 0.03, "purple");
+//
+// 		var deg = 0;
+// 		for (var i = 0; i <= parts; i++) {
+// 			var x2 = x + (Math.cos(Math.radians(deg)) * 2.5);
+// 			var z2 = z + (Math.sin(Math.radians(deg)) * 2.5);
+// 			console.log(x2, z2);
+// 			var start = new THREE.Vector3(x2, y1, z2);
+// 			var end = new THREE.Vector3(x2, y2, z2);
+// 			drawLineWithThickness(start, end, 0.03, "black");
+// 			deg += (360 / parts);
+// 		}
+// }
+
+function drawAllGoroutines3(g) {
+		var vecStart = g.vecStart;
+		var vecEnd = g.setVecEnd;
 		var x = vecStart.x;
 		var y1 = vecStart.y;
 		var y2 = vecEnd.y;
 		var z = vecStart.z;
-		drawLineWithThickness(vecStart, vecEnd, 0.03, "purple");
+		var name = g.id == 1 ? 'main' : "#" + g.id;
+		drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue");
+		drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
+					g.vecStart.z, 0.35, 0.003, "purple");
 
 		var deg = 0;
-		for (var i = 0; i <= parts; i++) {
-			var x2 = x + (Math.cos(Math.radians(deg)) * 2.5);
-			var z2 = z + (Math.sin(Math.radians(deg)) * 2.5);
-			console.log(x2, z2);
-			var start = new THREE.Vector3(x2, y1, z2);
-			var end = new THREE.Vector3(x2, y2, z2);
-			drawLineWithThickness(start, end, 0.03, "black");
-			deg += (360 / parts);
+		for (var i = 0; i < g.children.length; i++) {
+				deg += (360 / g.children.length);
+				var x2 = (x + Math.cos(Math.radians(deg))) * 2;
+				var z2 = (z + Math.sin(Math.radians(deg))) * 2;
+
+				g.children[i].vecStart.x = x2;
+				g.children[i].vecStart.z = z2;
+				g.children[i].vecEnd.x = x2;
+				g.children[i].vecEnd.z = z2;
+
+				var yy = g.children[i].vecStart.y;
+				var yy2 = g.children[i].vecEnd.y;
+				var lVec = new THREE.Vector3(x ,yy, z);
+				var lVec2 = new THREE.Vector3(x ,yy2, z);
+
+				drawSimpleLine(lVec, g.children[i].vecStart, "green");
+				drawSimpleLine(lVec2, g.children[i].vecEnd, "green");
+
+		}
+		for (var i = 0; i < g.children.length; i++) {
+				drawAllGoroutines3(g.children[i]);
 		}
 }
 
