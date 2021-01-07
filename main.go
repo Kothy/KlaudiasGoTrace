@@ -66,7 +66,7 @@ func Log(tag string, message string) {
 	trace.Log(ctx, tag, message)
 }
 
-func SendToChannel(value interface{}, channel chan int) {
+func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
 	chanName := findChannel(channel)
 	if chanName == "" {
 		chanName = createChannel(channel)
@@ -110,7 +110,7 @@ func isName(value string) bool {
 	return false
 }
 
-func ReceiveFromChannel(value interface{}, channel chan int) {
+func ReceiveFromChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
 	chanName := findChannel(channel)
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
 
@@ -158,13 +158,13 @@ func toJson(events []*Event) {
 	gParents := make(map[int64]int64)
 	var mainEndCmd Command
 	//fmt.Println(channels)
-	//for _, chann := range channels {
-	//	fmt.Printf("Kanal: %p\n", chann.Name)
-	//}
+	for _, chann := range channels {
+		fmt.Printf("Kanal: %p\n", chann.Name)
+	}
 
 	for _, event := range events {
 		if event.Name == "UserLog" {
-			//fmt.Printf("%+v\n", event)
+			fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
 			comm := event.strArgs[1]
 			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd") {
