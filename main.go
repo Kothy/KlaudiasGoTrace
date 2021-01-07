@@ -71,8 +71,7 @@ func SendToChannel(value interface{}, channel chan int) {
 	if chanName == "" {
 		chanName = createChannel(channel)
 	}
-
-	fmt.Println(channels)
+	//fmt.Println(channels)
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineSend")
 }
 
@@ -158,10 +157,14 @@ func toJson(events []*Event) {
 	goroutines := make(map[int64]bool)
 	gParents := make(map[int64]int64)
 	var mainEndCmd Command
+	//fmt.Println(channels)
+	//for _, chann := range channels {
+	//	fmt.Printf("Kanal: %p\n", chann.Name)
+	//}
 
 	for _, event := range events {
 		if event.Name == "UserLog" {
-			fmt.Printf("%+v\n", event)
+			//fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
 			comm := event.strArgs[1]
 			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd") {
@@ -188,7 +191,7 @@ func toJson(events []*Event) {
 			} else if strings.Contains(comm, "GoroutineSend") || strings.Contains(comm, "GoroutineReceive") {
 				args := strings.Split(event.strArgs[0], "_")
 				value := args[0]
-				fmt.Println(value == "<nil>")
+				//fmt.Println(value == "<nil>")
 				if value == "<nil>" {
 					value = "nil"
 				}
