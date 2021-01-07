@@ -8,6 +8,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"reflect"
 	"runtime"
 	"runtime/trace"
 	"strconv"
@@ -23,7 +24,8 @@ var mutex = &sync.Mutex{}
 
 type Chan struct {
 	Name string
-	Ch   chan int
+	//Ch   chan int
+	Ch interface{}
 }
 
 type Command struct {
@@ -66,7 +68,24 @@ func Log(tag string, message string) {
 	trace.Log(ctx, tag, message)
 }
 
-func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+func isinstanceof(value interface{}, typ string) bool {
+	return reflect.TypeOf(value).String() == typ
+}
+
+func isChannel(ch interface{}) bool {
+	chann := reflect.TypeOf(ch).String()
+	if strings.Contains(chann, "chan") {
+		return true
+	}
+	return false
+}
+
+//func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+func SendToChannel(value interface{}, channel interface{}) {
+	//fmt.Println("Je to kanal: ", isChannel(channel))
+	if !isChannel(channel) {
+		return
+	}
 	chanName := findChannel(channel)
 	if chanName == "" {
 		chanName = createChannel(channel)
@@ -75,7 +94,8 @@ func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvl
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineSend")
 }
 
-func findChannel(ch chan int) string {
+//func findChannel(ch chan int) string {
+func findChannel(ch interface{}) string {
 	mutex.Lock()
 	for _, val := range channels {
 		if val.Ch == ch {
@@ -87,7 +107,8 @@ func findChannel(ch chan int) string {
 	return ""
 }
 
-func createChannel(ch chan int) string {
+//func createChannel(ch chan int) string {
+func createChannel(ch interface{}) string {
 	mutex.Lock()
 	chanName := randomString()
 	for isName(chanName) {
@@ -110,7 +131,11 @@ func isName(value string) bool {
 	return false
 }
 
-func ReceiveFromChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+//func ReceiveFromChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+func ReceiveFromChannel(value interface{}, channel interface{}) {
+	if !isChannel(channel) {
+		return
+	}
 	chanName := findChannel(channel)
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
 
@@ -159,7 +184,7 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 	//fmt.Println(channels)
 	for _, chann := range channels {
-		fmt.Printf("Kanal: %p\n", chann.Name)
+		fmt.Printf("Kanal: ", chann.Name)
 	}
 
 	for _, event := range events {
