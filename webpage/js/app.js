@@ -19,6 +19,7 @@ var loader;
 var font;
 let THICKNESS = 0.02;
 let MAXLEN = 10;
+let division;
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -144,7 +145,7 @@ function loadJson2(){
 			} else {
 				div = (max_len / MAXLEN);
 			}
-
+			division = div;
 			max_len = 0;
 			for (var i = 0; i < goroutines.length; i++) {
 					var g = goroutines[i];
@@ -290,8 +291,12 @@ function drawAllGoroutines3(g) {
 		var deg = 0;
 		for (var i = 0; i < g.children.length; i++) {
 				deg += (360 / g.children.length);
-				var x2 = (x + Math.cos(Math.radians(deg))) * 2;
-				var z2 = (z + Math.sin(Math.radians(deg))) * 2;
+				var mul = 1;
+				if (g.children[i].children.length > 0) {
+					mul = 1.8;
+				}
+				var x2 = (x + (Math.cos(Math.radians(deg)) * 2 * g.depth * mul));
+				var z2 = (z + (Math.sin(Math.radians(deg)) * 2 * g.depth * mul));
 
 				g.children[i].vecStart.x = x2;
 				g.children[i].vecStart.z = z2;
