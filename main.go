@@ -184,7 +184,7 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 	//fmt.Println(channels)
 	for _, chann := range channels {
-		fmt.Printf("Kanal: ", chann.Name)
+		fmt.Println("Kanal: ", chann.Name)
 	}
 
 	for _, event := range events {
