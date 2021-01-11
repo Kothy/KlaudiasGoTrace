@@ -2,8 +2,9 @@ var fontJSON = {"glyphs":{"ợ":{"x_min":54,"x_max":746,"ha":746,"o":"m 539 308 
 
 var texts = [];
 var goroutines = [];
-var objects = [];
-var jsonArray;
+// var objects = [];
+var channels = new Map();
+var jsonArray = [];
 var scene;
 var renderer;
 var camera;
@@ -19,7 +20,7 @@ var loader;
 var font;
 let THICKNESS = 0.02;
 let MAXLEN = 10;
-let division;
+let division = 1;
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -33,6 +34,7 @@ class Goroutine {
 		this.len = 0
 		this.children = [];
 		this.depth = 0;
+		this.received = [];
 	}
 	setDepth(d) {
 		this.depth = d;
@@ -61,12 +63,39 @@ class Goroutine {
 	setVecEnd(end){
 		this.vecEnd = end;
 	}
+	addReceived(item){
+		this.received.push(item);
+	}
+}
+
+class Channel {
+	constructor(name) {
+		this.name = name;
+		this.chan = [];
+	}
+
+	size(){
+		return this.chan.length;
+	}
+	 push(item) {
+		 	this.chan.push(item);
+	 }
+
+	 pop(){
+		 	return this.chan.shift();
+	 }
+
+	 isEmpty() {
+ 		if (this.size() == 0) return true;
+		return false;
+ 	}
+
 }
 
 function mainApp(){
 		texts = [];
 		goroutines = [];
-		objects = [];
+		// objects = [];
 		scene = setScene();
 		renderer = setRenderer();
 		camera = setCamera();
@@ -82,6 +111,20 @@ function mainApp(){
 
 mainApp();
 
+function getChannel(name) {
+		if (channels.has(name)) {
+				return channels.get(name);
+		} else {
+				return createChannel(name);
+		}
+}
+
+function createChannel(name) {
+		var chan = new Channel(name);
+		channels.set(name, chan);
+		return chan;
+}
+
 function openFile(event) {
 		var input = event.target;
 
@@ -96,16 +139,28 @@ function openFile(event) {
 		reader.readAsText(input.files[0]);
 }
 
-function clearScene(){
-	while (scene.children.length > 1){
-		for (var i = 0; i < scene.children.length; i++) {
-			if (scene.children[i].type === "Mesh") {
-				scene.children[i].geometry.dispose();
-				scene.children[i].material.dispose();
-				scene.remove(scene.children[i]);
-			}
-		}
-	}
+function resetScene(){
+		clearScene(scene);
+		setLight();
+}
+
+function clearScene(obj){
+  while(obj.children.length > 0){
+    clearScene(obj.children[0])
+    obj.remove(obj.children[0]);
+  }
+  if(obj.geometry) obj.geometry.dispose()
+
+  if(obj.material){
+    //in case of map, bumpMap, normalMap, envMap ...
+    Object.keys(obj.material).forEach(prop => {
+      if(!obj.material[prop])
+        return
+      if(obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function')
+        obj.material[prop].dispose()
+    })
+    obj.material.dispose()
+  }
 }
 
 function calculateYFromTime(time) {
@@ -114,9 +169,18 @@ function calculateYFromTime(time) {
 		return -result;
 }
 
+function calculateYFromTimeWDiv(time) {
+		var result;
+		result = time * ONE_FRAME;
+		return -result / division;
+}
+
 function loadJson2(){
 			goroutines = [];
-			objects = [];
+			channels = new Map();
+			texts = [];
+			division = 1;
+			// objects = [];
 			var timeDiff;
 			var max_len = 0;
 
@@ -137,6 +201,21 @@ function loadJson2(){
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)
 					}
+				}
+				else if (obj.Command === "GoroutineSend"){
+						console.log("Odoslanie spravy gorutinou: ", obj.Id);
+						var chan = getChannel(obj.Channel);
+						var g2 = getGoroutineById(obj.Id);
+						var value = obj.Value;
+						chan.push([g2, value]);
+				}
+				else if (obj.Command === "GoroutineReceive"){
+						var chan = getChannel(obj.Channel);
+						var g2 = getGoroutineById(obj.Id);
+						var value = obj.Value;
+						var message = chan.pop();
+						console.log("Prijatie spravy gorutinou: ", obj.Id, "Prijata hodnota: ", value, " vs. v kanaly: ", message[1]);
+						g2.addReceived([obj.Time, value, message[0]]);
 				}
 			}
 			var div = 0;
@@ -178,6 +257,7 @@ function loadJson2(){
 		// setControls();
 
 		// console.log("Zacal som kreslit");
+		resetScene();
 		drawAllGoroutines3(getGoroutineById(1));
 		// console.log("Dokreslil som");
 
@@ -218,30 +298,9 @@ function findChildren(goroutine) {
 					children.push(goroutines[i]);
 				}
 		}
-		// console.log(children);
-		// console.log("drawAllGoroutines3(goroutines[0]);");
 		return children;
 }
 
-// function drawAllGoroutines() {
-// 		clearScene();
-// 		for (var i = 0; i < goroutines.length; i++) {
-// 				var g = goroutines[i];
-// 				drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue")
-// 				var name = g.id == 1 ? 'main' : "#" + g.id;
-// 				drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
-// 							g.vecStart.z, 0.35, 0.003, "purple");
-// 				if (g.id > 1) {
-// 					var x1 = g.parent.vecStart.x;
-// 					var y1 = g.vecStart.y;
-// 					var x2 = g.vecStart.x;
-// 					var y2 = g.vecStart.y;
-// 					var z = g.parent.vecStart.z;
-// 					drawSimpleLine(g.vecStart, new THREE.Vector3(x1 ,y1, z), "green");
-// 					drawSimpleLine(g.vecEnd, new THREE.Vector3(x1 ,g.vecEnd.y, g.vecEnd.z), "green");
-// 				}
-// 		}
-// }
 
 function toRadians(degrees) {
 		return degrees * (Math.PI/180);
@@ -255,28 +314,31 @@ Math.degrees = function(radians) {
 	return radians * 180 / Math.PI;
 }
 
-// function drawAllGoroutines2(parts) {
-// 	 	var vecStart = new THREE.Vector3(0, 0, 0);
-// 		var vecEnd = new THREE.Vector3(0, -3, 0);
-// 		var x = vecStart.x;
-// 		var y1 = vecStart.y;
-// 		var y2 = vecEnd.y;
-// 		var z = vecStart.z;
-// 		drawLineWithThickness(vecStart, vecEnd, 0.03, "purple");
-//
-// 		var deg = 0;
-// 		for (var i = 0; i <= parts; i++) {
-// 			var x2 = x + (Math.cos(Math.radians(deg)) * 2.5);
-// 			var z2 = z + (Math.sin(Math.radians(deg)) * 2.5);
-// 			console.log(x2, z2);
-// 			var start = new THREE.Vector3(x2, y1, z2);
-// 			var end = new THREE.Vector3(x2, y2, z2);
-// 			drawLineWithThickness(start, end, 0.03, "black");
-// 			deg += (360 / parts);
-// 		}
-// }
+function getMidPoint(a, b) {
+		return new THREE.Vector3((a.x + b.x)/2, (a.y + b.y)/2, (a.z + b.z)/2);
+}
+
+function drawArrow(origin, tip, color, textt){
+		const length = origin.distanceTo(tip);
+		const midpoint = getMidPoint(tip, origin);
+		tip.normalize();
+
+		const arrowHelper = new THREE.ArrowHelper(tip, origin, length, color);
+
+		var arrowLabel = createText(textt, font, midpoint.x, midpoint.y + 0.1,midpoint.z, 0.11, 0.003, color);
+
+		arrowLabel.setRotationFromEuler(arrowHelper.rotation);
+		arrowLabel.rotateZ(toRadians(90));
+
+		scene.add(arrowHelper);
+		scene.add(arrowLabel);
+}
+
+
+// drawArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1,1,1), "blue", "cau");
 
 function drawAllGoroutines3(g) {
+		// clearScene();
 		var vecStart = g.vecStart;
 		var vecEnd = g.setVecEnd;
 		var x = vecStart.x;
@@ -375,9 +437,9 @@ function drawText(text, font, x, y, z, size, height, color){
 		var materialText = new THREE.MeshLambertMaterial({color: color});
 		var meshText = new THREE.Mesh(geometryText, materialText);
 
-		objects.push(materialText);
-		objects.push(meshText);
-		objects.push(geometryText);
+		// objects.push(materialText);
+		// objects.push(meshText);
+		// objects.push(geometryText);
 
 		meshText.position.y = y;
 		meshText.position.x = x;
@@ -385,6 +447,27 @@ function drawText(text, font, x, y, z, size, height, color){
 		scene.add(meshText);
 
 		texts.push(meshText);
+		return meshText;
+}
+
+function createText(text, font, x, y, z, size, height, color){
+		var geometryText = new THREE.TextGeometry(text, {
+				font: font, size: size, height: height});
+
+		geometryText.center();
+		var materialText = new THREE.MeshLambertMaterial({color: color});
+		var meshText = new THREE.Mesh(geometryText, materialText);
+
+		// objects.push(materialText);
+		// objects.push(meshText);
+		// objects.push(geometryText);
+
+		meshText.position.y = y;
+		meshText.position.x = x;
+		meshText.position.z = z;
+		// scene.add(meshText);
+
+		// texts.push(meshText);
 		return meshText;
 }
 
