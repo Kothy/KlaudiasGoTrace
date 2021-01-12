@@ -2,7 +2,6 @@ var fontJSON = {"glyphs":{"ợ":{"x_min":54,"x_max":746,"ha":746,"o":"m 539 308 
 
 var texts = [];
 var goroutines = [];
-// var objects = [];
 var channels = new Map();
 var jsonArray = [];
 var scene;
@@ -11,6 +10,7 @@ var camera;
 var ambientLight;
 var controls;
 var spinner;
+var drawingThread;
 spinner = null;
 var WINDOW_CUT;
 WINDOW_CUT = 21;
@@ -23,7 +23,8 @@ var font;
 let THICKNESS = 0.02;
 let MAXLEN = 10;
 let division = 1;
-var loadingText;
+var loadingScreen;
+var RESOURCES_LOADED = true;
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -98,8 +99,7 @@ class Channel {
 function mainApp(){
 		texts = [];
 		goroutines = [];
-		loadingText = null;
-		// objects = [];
+
 		scene = setScene();
 		renderer = setRenderer();
 		camera = setCamera();
@@ -111,9 +111,31 @@ function mainApp(){
 		loader = new THREE.FontLoader();
 		font = loader.parse(fontJSON);
 
-		drawScene();
+		setLoadScreen();
 
+		drawScene();
 }
+
+function setLoadScreen() {
+	loadingScreen = {
+		scene: new THREE.Scene(),
+		camera: new THREE.PerspectiveCamera(75, width / height, 0.1, 1000),
+		light: new THREE.AmbientLight(0xffffff,1.0),
+		box: new THREE.Mesh(
+			new THREE.TextGeometry("Drawing",{font: font,size: 1,height: 0.5}),
+			new THREE.MeshBasicMaterial({color: "green"})
+		)
+	};
+	loadingScreen.scene.background = new THREE.Color("rgb(255, 255, 255)");
+	loadingScreen.camera.position.z = 6;
+	loadingScreen.camera.lookAt(0, -5, 0);
+	loadingScreen.box.geometry.center();
+
+	// loadingScreen.box.position.set(0,0,0);
+	loadingScreen.camera.lookAt(loadingScreen.box.position);
+	loadingScreen.scene.add(loadingScreen.box);
+}
+
 
 mainApp();
 
@@ -139,7 +161,12 @@ function openFile(event) {
 			var text = reader.result;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
-			loadJson();
+			drawText("Drawing", font, 0, 0, 0, 3, 0.5, "purple");
+			Notiflix.Notify.Success('Drawing');
+			// Notiflix.Report.Info('Loading','Your graph is being drawn','Ok');
+
+			setTimeout(loadJson, 100);
+
 		};
 
 		reader.readAsText(input.files[0]);
@@ -180,13 +207,20 @@ function calculateYFromTimeWDiv(time) {
 		return -result / division;
 }
 
+function sleep(sleepDuration){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + sleepDuration){ /* do nothing */ }
+}
+
 function loadJson() {
-			console.log("Nacitavam jsona");
+			// RESOURCES_LOADED = false;
+
+
 			goroutines = [];
 			channels = new Map();
 			texts = [];
 			division = 1;
-			// objects = [];
+
 			var timeDiff;
 			var max_len = 0;
 
@@ -209,7 +243,6 @@ function loadJson() {
 					}
 				}
 				else if (obj.Command === "GoroutineSend"){
-						// console.log("Odoslanie spravy gorutinou: ", obj.Id);
 						var chan = getChannel(obj.Channel);
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
@@ -220,7 +253,6 @@ function loadJson() {
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
 						var message = chan.pop();
-						// console.log("Prijatie spravy gorutinou: ", obj.Id, "Prijata hodnota: ", value, " vs. v kanaly: ", message[1]);
 						g2.addReceived([message[2], obj.Time, value, message[0]]);
 				}
 			}
@@ -247,22 +279,20 @@ function loadJson() {
 					var children = findChildren(g);
 					g.setChildren(children);
 		}
-		setDepths(getGoroutineById(1), 0);
+		setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
 
-		for (var i = 0; i < goroutines.length; i++) {
-				var g = goroutines[i];
 
-				console.log(g);
-		}
+		// for (var i = 0; i < goroutines.length; i++) {
+		// 		var g = goroutines[i];
+		//
+		// 		// console.log(g);
+		// }
 
-		resetScene();
-		console.log("Zacala som kreslit");
-		
-		drawLoadingText();
-		drawAllGoroutines(getGoroutineById(1));
-		drawCommunication();
-		// removeLoadingText();
-		console.log("Dokreslila som");
+		setTimeout(function(){resetScene();}, 100);
+		setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
+		setTimeout(function(){drawCommunication();}, 100);
+
+		// RESOURCES_LOADED = true;
 
 		camera.position.x = 0;
 		camera.position.y = -(max_len/2);
@@ -279,6 +309,7 @@ function setDepths(g, d) {
 			setDepths(child, 0);
 	}
 }
+
 
 function depth(g, d){
 		if (g.children.length == 0) {
@@ -324,11 +355,11 @@ function getMidPoint(a, b) {
 function drawArrow(origin, tip, color, textt){
 		const length = origin.distanceTo(tip);
 		const midpoint = getMidPoint(tip, origin);
-		// tip.normalize();
 
-		// const arrowHelper = new THREE.ArrowHelper(tip, origin, length, color);
 		var direction = new THREE.Vector3().subVectors(tip, origin);
-		var arrowHelper = new THREE.ArrowHelper(direction.clone().normalize(), origin, direction.length(), color);
+		
+		var arrowHelper = new THREE.ArrowHelper(direction.clone().normalize(),
+		origin, direction.length(), color, 0.55);
 
 		var arrowLabel = createText(textt, font, midpoint.x, midpoint.y + 0.1, midpoint.z, 0.2, 0.003, color);
 
@@ -385,6 +416,7 @@ function drawAllGoroutines(g) {
 		}
 }
 
+
 function drawCommunication() {
 	for (var i = 0; i < goroutines.length; i++) {
 			var g = goroutines[i];
@@ -397,16 +429,11 @@ function drawCommunication() {
 				var timeReceived = g.received[j][1];
 				var recValue = g.received[j][2];
 				var sendG = g.received[j][3];
-				// console.log(g.id, g.received, timeReceived - timeSend);
-				// console.log("prijatie");
 				var originY = calculateYFromTimeWDiv(timeSend);
 				var tipY = calculateYFromTimeWDiv(timeReceived);
 				var arrOrigin = new THREE.Vector3(sendG.vecStart.x, tipY, sendG.vecStart.z);
 				var arrTip = new THREE.Vector3(g.vecStart.x, tipY, g.vecStart.z);
-				// drawSimpleLine(arrOrigin, arrTip, "red");
 				drawArrow(arrOrigin, arrTip, ARROW_COLOR, recValue);
-				// (origin, tip, color, textt)
-				// drawMyArrow(arrOrigin, arrTip, "red", recValue);
 			}
 
 	}
@@ -484,38 +511,22 @@ function drawText(text, font, x, y, z, size, height, color){
 		return meshText;
 }
 
-function drawLoadingText(){
-		loadingText = drawTextSpin("Drawing", 1, 2, "pink");
-}
-function removeLoadingText(){
-		loadingText.geometry.dispose();
-		loadingText.material.dispose();
-		scene.remove(loadingText);
-		loadingText = null;
-}
-
 function drawTextSpin(text, size, height, color){
 		var geometryText = new THREE.TextGeometry(text,
 			{
 				font: font,
 				size: 1,
 				height: 0.5,
-				// curveSegments: 0.0001,
-				// bevelEnabled: true,
-				// bevelThickness: 0.1,
-				// bevelSize: 1,
-				// bevelOffset: 0,
-				// bevelSegments: 3
 			});
 
 		geometryText.center();
-		var materialText = new THREE.MeshLambertMaterial({color: color});
+		var materialText = new THREE.MeshBasicMaterial({color: color});
 		var meshText = new THREE.Mesh(geometryText, materialText);
 
 		meshText.position.y = 0;
 		meshText.position.x = 0;
 		meshText.position.z = 0;
-		scene.add(meshText);
+		// scene.add(meshText);
 
 		return meshText;
 }
@@ -548,13 +559,9 @@ function setControls(){
 function drawScene(){
 
 	var update = function(){
-		console.log("Kreslim scenu");
+		// console.log("Kreslim scenu");
 		//object.rotation.x += 0.01;
 		//object.rotation.y += 0.001;
-
-		if (loadingText !== null) {
-				loadingText.rotation.x += 0.01;
-		}
 
 		texts.forEach((item, i) => {
 			item.rotation.x = camera.rotation.x;
@@ -577,6 +584,19 @@ function drawScene(){
 	};
 	GameLoop();
 }
+
+function checkLoading() {
+	if (RESOURCES_LOADED == false){
+		requestAnimationFrame(drawScene);
+		loadingScreen.box.rotation.x += 0.01;
+
+		renderer.render(loadingScreen.scene, loadingScreen.camera);
+		return true;
+	}
+	return false;
+}
+
+
 
 function setScene(){
 	var scene = new THREE.Scene();
@@ -601,9 +621,10 @@ function setCamera(){
 	height = window.innerHeight - WINDOW_CUT;
 	var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 	camera.position.z = 6;
+	camera.position.y = -4;
 	//camera.position.x = -3;
-	camera.lookAt(0, -5, 0);
-	return camera
+	camera.lookAt(0, 0, 6);
+	return camera;
 }
 
 function setCameraPos(z) {
