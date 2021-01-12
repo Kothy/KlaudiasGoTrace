@@ -14,6 +14,8 @@ var spinner;
 spinner = null;
 var WINDOW_CUT;
 WINDOW_CUT = 21;
+var ARROW_COLOR;
+ARROW_COLOR = "#DC143C"
 var ONE_FRAME;
 ONE_FRAME = 0.0000001;
 var loader;
@@ -21,6 +23,7 @@ var font;
 let THICKNESS = 0.02;
 let MAXLEN = 10;
 let division = 1;
+var loadingText;
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -95,6 +98,7 @@ class Channel {
 function mainApp(){
 		texts = [];
 		goroutines = [];
+		loadingText = null;
 		// objects = [];
 		scene = setScene();
 		renderer = setRenderer();
@@ -106,7 +110,9 @@ function mainApp(){
 
 		loader = new THREE.FontLoader();
 		font = loader.parse(fontJSON);
+
 		drawScene();
+
 }
 
 mainApp();
@@ -133,33 +139,32 @@ function openFile(event) {
 			var text = reader.result;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
-			loadJson2();
+			loadJson();
 		};
-		//console.log(input.files[0]);
+
 		reader.readAsText(input.files[0]);
 }
 
-function resetScene(){
+function resetScene() {
 		clearScene(scene);
 		setLight();
 }
 
-function clearScene(obj){
-  while(obj.children.length > 0){
-    clearScene(obj.children[0])
+function clearScene(obj) {
+  while (obj.children.length > 0){
+    clearScene(obj.children[0]);
     obj.remove(obj.children[0]);
   }
-  if(obj.geometry) obj.geometry.dispose()
+  if (obj.geometry) obj.geometry.dispose();
 
-  if(obj.material){
-    //in case of map, bumpMap, normalMap, envMap ...
+  if (obj.material){
     Object.keys(obj.material).forEach(prop => {
-      if(!obj.material[prop])
-        return
-      if(obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function')
-        obj.material[prop].dispose()
+      if (!obj.material[prop])
+        return;
+      if (obj.material[prop] !== null && typeof obj.material[prop].dispose === 'function')
+        obj.material[prop].dispose();
     })
-    obj.material.dispose()
+    obj.material.dispose();
   }
 }
 
@@ -175,7 +180,8 @@ function calculateYFromTimeWDiv(time) {
 		return -result / division;
 }
 
-function loadJson2(){
+function loadJson() {
+			console.log("Nacitavam jsona");
 			goroutines = [];
 			channels = new Map();
 			texts = [];
@@ -203,19 +209,19 @@ function loadJson2(){
 					}
 				}
 				else if (obj.Command === "GoroutineSend"){
-						console.log("Odoslanie spravy gorutinou: ", obj.Id);
+						// console.log("Odoslanie spravy gorutinou: ", obj.Id);
 						var chan = getChannel(obj.Channel);
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
-						chan.push([g2, value]);
+						chan.push([g2, value, obj.Time]);
 				}
 				else if (obj.Command === "GoroutineReceive"){
 						var chan = getChannel(obj.Channel);
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
 						var message = chan.pop();
-						console.log("Prijatie spravy gorutinou: ", obj.Id, "Prijata hodnota: ", value, " vs. v kanaly: ", message[1]);
-						g2.addReceived([obj.Time, value, message[0]]);
+						// console.log("Prijatie spravy gorutinou: ", obj.Id, "Prijata hodnota: ", value, " vs. v kanaly: ", message[1]);
+						g2.addReceived([message[2], obj.Time, value, message[0]]);
 				}
 			}
 			var div = 0;
@@ -249,17 +255,14 @@ function loadJson2(){
 				console.log(g);
 		}
 
-		// camera.position.x = 0;
-		// camera.position.y = -(max_len/2);
-		// camera.position.z = 10;
-		//
-		// camera.lookAt(0, -(max_len/2), -1);
-		// setControls();
-
-		// console.log("Zacal som kreslit");
 		resetScene();
-		drawAllGoroutines3(getGoroutineById(1));
-		// console.log("Dokreslil som");
+		console.log("Zacala som kreslit");
+		
+		drawLoadingText();
+		drawAllGoroutines(getGoroutineById(1));
+		drawCommunication();
+		// removeLoadingText();
+		console.log("Dokreslila som");
 
 		camera.position.x = 0;
 		camera.position.y = -(max_len/2);
@@ -321,14 +324,17 @@ function getMidPoint(a, b) {
 function drawArrow(origin, tip, color, textt){
 		const length = origin.distanceTo(tip);
 		const midpoint = getMidPoint(tip, origin);
-		tip.normalize();
+		// tip.normalize();
 
-		const arrowHelper = new THREE.ArrowHelper(tip, origin, length, color);
+		// const arrowHelper = new THREE.ArrowHelper(tip, origin, length, color);
+		var direction = new THREE.Vector3().subVectors(tip, origin);
+		var arrowHelper = new THREE.ArrowHelper(direction.clone().normalize(), origin, direction.length(), color);
 
-		var arrowLabel = createText(textt, font, midpoint.x, midpoint.y + 0.1,midpoint.z, 0.11, 0.003, color);
+		var arrowLabel = createText(textt, font, midpoint.x, midpoint.y + 0.1, midpoint.z, 0.2, 0.003, color);
 
 		arrowLabel.setRotationFromEuler(arrowHelper.rotation);
-		arrowLabel.rotateZ(toRadians(90));
+		// arrowLabel.rotateZ(toRadians(90));
+		texts.push(arrowLabel);
 
 		scene.add(arrowHelper);
 		scene.add(arrowLabel);
@@ -337,7 +343,7 @@ function drawArrow(origin, tip, color, textt){
 
 // drawArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1,1,1), "blue", "cau");
 
-function drawAllGoroutines3(g) {
+function drawAllGoroutines(g) {
 		// clearScene();
 		var vecStart = g.vecStart;
 		var vecEnd = g.setVecEnd;
@@ -375,8 +381,35 @@ function drawAllGoroutines3(g) {
 
 		}
 		for (var i = 0; i < g.children.length; i++) {
-				drawAllGoroutines3(g.children[i]);
+				drawAllGoroutines(g.children[i]);
 		}
+}
+
+function drawCommunication() {
+	for (var i = 0; i < goroutines.length; i++) {
+			var g = goroutines[i];
+			for (var j = 0; j < g.received.length; j++) {
+				// received[0] - time of send
+				// received[1] - time of receive
+				// received[2] - received value
+				// received[3] - send by Goroutine
+				var timeSend = g.received[j][0];
+				var timeReceived = g.received[j][1];
+				var recValue = g.received[j][2];
+				var sendG = g.received[j][3];
+				// console.log(g.id, g.received, timeReceived - timeSend);
+				// console.log("prijatie");
+				var originY = calculateYFromTimeWDiv(timeSend);
+				var tipY = calculateYFromTimeWDiv(timeReceived);
+				var arrOrigin = new THREE.Vector3(sendG.vecStart.x, tipY, sendG.vecStart.z);
+				var arrTip = new THREE.Vector3(g.vecStart.x, tipY, g.vecStart.z);
+				// drawSimpleLine(arrOrigin, arrTip, "red");
+				drawArrow(arrOrigin, arrTip, ARROW_COLOR, recValue);
+				// (origin, tip, color, textt)
+				// drawMyArrow(arrOrigin, arrTip, "red", recValue);
+			}
+
+	}
 }
 
 function getGoroutineById(id) {
@@ -423,6 +456,7 @@ function drawSimpleLine(start, end, color){
 
 		const line = new THREE.Line(geometry, material);
 		scene.add(line);
+		return line;
 }
 
 function random(min, max) {
@@ -450,6 +484,42 @@ function drawText(text, font, x, y, z, size, height, color){
 		return meshText;
 }
 
+function drawLoadingText(){
+		loadingText = drawTextSpin("Drawing", 1, 2, "pink");
+}
+function removeLoadingText(){
+		loadingText.geometry.dispose();
+		loadingText.material.dispose();
+		scene.remove(loadingText);
+		loadingText = null;
+}
+
+function drawTextSpin(text, size, height, color){
+		var geometryText = new THREE.TextGeometry(text,
+			{
+				font: font,
+				size: 1,
+				height: 0.5,
+				// curveSegments: 0.0001,
+				// bevelEnabled: true,
+				// bevelThickness: 0.1,
+				// bevelSize: 1,
+				// bevelOffset: 0,
+				// bevelSegments: 3
+			});
+
+		geometryText.center();
+		var materialText = new THREE.MeshLambertMaterial({color: color});
+		var meshText = new THREE.Mesh(geometryText, materialText);
+
+		meshText.position.y = 0;
+		meshText.position.x = 0;
+		meshText.position.z = 0;
+		scene.add(meshText);
+
+		return meshText;
+}
+
 function createText(text, font, x, y, z, size, height, color){
 		var geometryText = new THREE.TextGeometry(text, {
 				font: font, size: size, height: height});
@@ -465,7 +535,7 @@ function createText(text, font, x, y, z, size, height, color){
 		meshText.position.y = y;
 		meshText.position.x = x;
 		meshText.position.z = z;
-		// scene.add(meshText);
+		//scene.add(meshText);
 
 		// texts.push(meshText);
 		return meshText;
@@ -476,11 +546,16 @@ function setControls(){
 }
 
 function drawScene(){
-	// change of scene
+
 	var update = function(){
+		console.log("Kreslim scenu");
 		//object.rotation.x += 0.01;
 		//object.rotation.y += 0.001;
-		//console.log(camera.rotation.x)
+
+		if (loadingText !== null) {
+				loadingText.rotation.x += 0.01;
+		}
+
 		texts.forEach((item, i) => {
 			item.rotation.x = camera.rotation.x;
 			item.rotation.y = camera.rotation.y;

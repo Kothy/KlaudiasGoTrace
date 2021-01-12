@@ -1,6 +1,6 @@
 [
     {
-        "Time": 46055,
+        "Time": 74164,
         "Command": "GoroutineStart",
         "Id": 1,
         "ParentId": 0,
@@ -12,7 +12,7 @@
         "Duration": 0
     },
     {
-        "Time": 127681,
+        "Time": 148329,
         "Command": "GoroutineStart",
         "Id": 7,
         "ParentId": 1,
@@ -24,31 +24,31 @@
         "Duration": 0
     },
     {
-        "Time": 9972938,
+        "Time": 9878089,
         "Command": "GoroutineSend",
         "Id": 7,
         "ParentId": 0,
         "From": "",
         "To": "",
-        "Channel": "9IPHQZELJy",
+        "Channel": "AK2nkKNBce",
         "Value": "42",
         "EventID": "",
         "Duration": 0
     },
     {
-        "Time": 10020436,
-        "Command": "GoroutineSend",
+        "Time": 9990926,
+        "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
         "From": "",
         "To": "",
-        "Channel": "9IPHQZELJy",
-        "Value": "nil",
+        "Channel": "AK2nkKNBce",
+        "Value": "42",
         "EventID": "",
         "Duration": 0
     },
     {
-        "Time": 10024362,
+        "Time": 9994869,
         "Command": "GoroutineEnd",
         "Id": 1,
         "ParentId": 0,
@@ -60,7 +60,7 @@
         "Duration": 0
     },
     {
-        "Time": 10024362,
+        "Time": 9994869,
         "Command": "GoroutineEnd",
         "Id": 7,
         "ParentId": 0,

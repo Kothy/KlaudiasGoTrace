@@ -24,8 +24,9 @@ var mutex = &sync.Mutex{}
 
 type Chan struct {
 	Name string
-	//Ch   chan int
-	Ch interface{}
+	Ch   interface{}
+	//ChSend chan<- interface{}
+	//ChRec <-chan interface{}
 }
 
 type Command struct {
@@ -82,7 +83,7 @@ func isChannel(ch interface{}) bool {
 
 //func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
 func SendToChannel(value interface{}, channel interface{}) {
-	//fmt.Println("Je to kanal: ", isChannel(channel))
+
 	if !isChannel(channel) {
 		return
 	}
@@ -90,15 +91,17 @@ func SendToChannel(value interface{}, channel interface{}) {
 	if chanName == "" {
 		chanName = createChannel(channel)
 	}
-	//fmt.Println(channels)
+
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineSend")
 }
 
 //func findChannel(ch chan int) string {
 func findChannel(ch interface{}) string {
 	mutex.Lock()
+	chPtrStr := fmt.Sprintf("%v", ch)
 	for _, val := range channels {
-		if val.Ch == ch {
+		ch2PtrStr := fmt.Sprintf("%v", val.Ch)
+		if val.Ch == ch || chPtrStr == ch2PtrStr {
 			mutex.Unlock()
 			return val.Name
 		}
@@ -108,6 +111,55 @@ func findChannel(ch interface{}) string {
 }
 
 //func createChannel(ch chan int) string {
+//func createChannel(ch interface{}) string {
+//	mutex.Lock()
+//	chanName := randomString()
+//	for isName(chanName) {
+//		chanName = randomString()
+//	}
+//
+//	channnn := ch
+//	fmt.Println("Vytvaram kanal s typom: ",reflect.TypeOf(channnn).String())
+//	chType := reflect.TypeOf(ch).String()
+//
+//	if strings.Contains(chType, "<-chan") {
+//		chch := ch.(<-chan interface{})
+//		channels = append(channels, &Chan{
+//			Name: chanName,
+//			ChRec:   chch,
+//			Ch: nil,
+//			ChSend: nil,
+//
+//		})
+//	} else if strings.Contains(chType, "chan<-") {
+//		chch := ch.(chan<- interface{})
+//		channels = append(channels, &Chan{
+//			Name: chanName,
+//			ChSend:   chch,
+//			ChRec:   nil,
+//			Ch: nil,
+//		})
+//	} else {
+//		chch := ch.(chan interface{})
+//		chch2 := ch.(<-chan interface{})
+//		chch3 := ch.(chan<- interface{})
+//		channels = append(channels, &Chan{
+//			Name: chanName,
+//			Ch:   chch,
+//			ChRec: chch2,
+//			ChSend: chch3,
+//		})
+//	}
+//
+//	channels = append(channels, &Chan{
+//				Name: chanName,
+//				Ch:   ch,
+//			})
+//
+//	mutex.Unlock()
+//	return chanName
+//}
+
 func createChannel(ch interface{}) string {
 	mutex.Lock()
 	chanName := randomString()
@@ -136,7 +188,14 @@ func ReceiveFromChannel(value interface{}, channel interface{}) {
 	if !isChannel(channel) {
 		return
 	}
+
+	fmt.Println("Prijate z: ", channel)
+	for i := range channels {
+		fmt.Print(channels[i].Ch, ",")
+	}
+	fmt.Println("\n-------------------------------")
 	chanName := findChannel(channel)
+
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
 
 }
@@ -182,12 +241,13 @@ func toJson(events []*Event) {
 	goroutines := make(map[int64]bool)
 	gParents := make(map[int64]int64)
 	var mainEndCmd Command
-	//fmt.Println(channels)
+
 	for _, chann := range channels {
 		fmt.Println("Kanal: ", chann.Name)
 	}
 
 	for _, event := range events {
+		//fmt.Printf("%+v\n", event)
 		if event.Name == "UserLog" {
 			fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
@@ -216,7 +276,7 @@ func toJson(events []*Event) {
 			} else if strings.Contains(comm, "GoroutineSend") || strings.Contains(comm, "GoroutineReceive") {
 				args := strings.Split(event.strArgs[0], "_")
 				value := args[0]
-				//fmt.Println(value == "<nil>")
+
 				if value == "<nil>" {
 					value = "nil"
 				}
@@ -263,6 +323,11 @@ func EndTrace() {
 	trace.Stop()
 
 	events := MyReadTrace(traceFileName + ".out")
+	err := os.Remove(traceFileName + ".out")
+
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	toJson(events)
 }
