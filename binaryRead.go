@@ -39,9 +39,9 @@ var revents []rawEvent
 func MyReadTrace(filename string) []*Event {
 	f, _ := os.Open(filename)
 
-	goVersion,rawEvents,uintStrings,_ := readTrace(f)
+	goVersion, rawEvents, uintStrings, _ := readTrace(f)
 
-	events, _, _:= parseEvents(goVersion, rawEvents, uintStrings)
+	events, _, _ := parseEvents(goVersion, rawEvents, uintStrings)
 	nameEvents(events)
 
 	//for _, event := range events {
@@ -79,6 +79,7 @@ type Event struct {
 	// for UserRegion: if the start region, the corresponding UserRegion end event
 	Link *Event
 }
+
 // Frame is a frame in stack traces.
 type Frame struct {
 	PC   uint64
@@ -87,7 +88,6 @@ type Frame struct {
 	Line int
 }
 
-// toto je Divanov kod
 const (
 	EvNone              = 0  // unused
 	EvBatch             = 1  // start of per-ParentId batch of events [pid, timestamp]
@@ -143,7 +143,6 @@ const (
 	EvCount             = 51
 )
 
-// toto je Divanov kod
 var EventDescriptions = [EvCount]struct {
 	Name       string
 	minVersion int
@@ -204,16 +203,14 @@ var EventDescriptions = [EvCount]struct {
 	EvGoRecv:            {"GoRecv", 1006, false, []string{"eid", "cid", "val"}, nil}, // toto si mozno uz on dolnil ??
 }
 
-// toto je Divanov kod
 type rawEvent struct {
-	name string
+	name  string
 	off   int
 	typ   byte
 	args  []uint64
 	sargs []string
 }
 
-// toto je Divanov kod
 func parseHeader(buf []byte) (int, error) {
 	if len(buf) != 16 {
 		return 0, fmt.Errorf("bad header length")
@@ -236,7 +233,6 @@ func parseHeader(buf []byte) (int, error) {
 	return ver, nil
 }
 
-// toto je Divanov kod
 func readTrace(r io.Reader) (ver int, events []rawEvent, strings map[uint64]string, err error) {
 	// Read and validate trace header.
 	var buf [16]byte
@@ -372,7 +368,6 @@ func readTrace(r io.Reader) (ver int, events []rawEvent, strings map[uint64]stri
 	return
 }
 
-// toto je Divanov kod
 func readVal(r io.Reader, off0 int) (v uint64, off int, err error) {
 	off = off0
 	for i := 0; i < 10; i++ {
@@ -391,7 +386,6 @@ func readVal(r io.Reader, off0 int) (v uint64, off int, err error) {
 	return 0, 0, fmt.Errorf("bad value at Offset 0x%x", off0)
 }
 
-// toto je Divanov kod
 func readStr(r io.Reader, off0 int) (s string, off int, err error) {
 	var sz uint64
 	sz, off, err = readVal(r, off0)
@@ -645,12 +639,10 @@ func argNum(raw rawEvent, ver int) int {
 	return narg
 }
 
-
-func nameEvents(evs []*Event){
+func nameEvents(evs []*Event) {
 	for _, s := range evs {
 		eventName := EventDescriptions[s.Typ].Name
 		s.Name = eventName
 	}
 
 }
-

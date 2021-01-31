@@ -189,11 +189,11 @@ func ReceiveFromChannel(value interface{}, channel interface{}) {
 		return
 	}
 
-	fmt.Println("Prijate z: ", channel)
-	for i := range channels {
-		fmt.Print(channels[i].Ch, ",")
-	}
-	fmt.Println("\n-------------------------------")
+	//fmt.Println("Prijate z: ", channel)
+	//for i := range channels {
+	//	fmt.Print(channels[i].Ch, ",")
+	//}
+	//fmt.Println("\n-------------------------------")
 	chanName := findChannel(channel)
 
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
@@ -242,14 +242,15 @@ func toJson(events []*Event) {
 	gParents := make(map[int64]int64)
 	var mainEndCmd Command
 
-	for _, chann := range channels {
-		fmt.Println("Kanal: ", chann.Name)
-	}
+	//for _, chann := range channels {
+	//	fmt.Println("Kanal: ", chann.Name)
+	//}
 
+	fmt.Println("Pole eventov je dlzky: ", len(events))
 	for _, event := range events {
-		//fmt.Printf("%+v\n", event)
+		fmt.Printf("%+v\n", event)
 		if event.Name == "UserLog" {
-			fmt.Printf("%+v\n", event)
+			//fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
 			comm := event.strArgs[1]
 			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd") {
@@ -323,11 +324,11 @@ func EndTrace() {
 	trace.Stop()
 
 	events := MyReadTrace(traceFileName + ".out")
-	err := os.Remove(traceFileName + ".out")
-
-	if err != nil {
-		log.Fatal(err)
-	}
+	//err := os.Remove(traceFileName + ".out")
+	//
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
 
 	toJson(events)
 }
