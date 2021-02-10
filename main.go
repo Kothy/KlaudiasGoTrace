@@ -246,7 +246,7 @@ func toJson(events []*Event) {
 	//	fmt.Println("Kanal: ", chann.Name)
 	//}
 
-	fmt.Println("Pole eventov je dlzky: ", len(events))
+	//fmt.Println("Pole eventov je dlzky: ", len(events))
 	for _, event := range events {
 		fmt.Printf("%+v\n", event)
 		if event.Name == "UserLog" {
