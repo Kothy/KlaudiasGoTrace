@@ -67,6 +67,7 @@ class Goroutine {
 	setVecEnd(end){
 		this.vecEnd = end;
 	}
+
 	addReceived(item){
 		this.received.push(item);
 	}
@@ -93,7 +94,6 @@ class Channel {
  		if (this.size() == 0) return true;
 		return false;
  	}
-
 }
 
 function mainApp(){
@@ -136,7 +136,6 @@ function setLoadScreen() {
 	loadingScreen.scene.add(loadingScreen.box);
 }
 
-
 mainApp();
 
 function getChannel(name) {
@@ -163,10 +162,8 @@ function openFile(event) {
 			jsonArray = objJson;
 			drawText("Drawing", font, 0, 0, 0, 3, 0.5, "purple");
 			Notiflix.Notify.Success('Drawing');
-			// Notiflix.Report.Info('Loading','Your graph is being drawn','Ok');
 
 			setTimeout(loadJson, 100);
-
 		};
 
 		reader.readAsText(input.files[0]);
@@ -214,8 +211,6 @@ function sleep(sleepDuration){
 
 function loadJson() {
 			// RESOURCES_LOADED = false;
-
-
 			goroutines = [];
 			channels = new Map();
 			texts = [];
@@ -281,24 +276,26 @@ function loadJson() {
 		}
 		setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
 
-
 		// for (var i = 0; i < goroutines.length; i++) {
 		// 		var g = goroutines[i];
-		//
 		// 		// console.log(g);
 		// }
 
 		setTimeout(function(){resetScene();}, 100);
 		setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
-		setTimeout(function(){drawCommunication();}, 100);
+		//setTimeout(function(){drawCommunication();}, 100);
 
-		// RESOURCES_LOADED = true;
+		var mainGoroutine = goroutines[0];
+		var start = mainGoroutine.vecStart;
+		var end = mainGoroutine.vecEnd;
 
 		camera.position.x = 0;
-		camera.position.y = -(max_len/2);
-		camera.position.z = 10;
+		camera.position.y = -(max_len/2) * 2.5;
+		camera.position.z = -(max_len * 1.5);
 
-		camera.lookAt(0, -(max_len/2), -1);
+		camera.lookAt(0, ((start.y + end.y)/2), -1);
+		//camera.lookAt(0, 0, 0);
+
 		setControls();
 }
 
@@ -309,7 +306,6 @@ function setDepths(g, d) {
 			setDepths(child, 0);
 	}
 }
-
 
 function depth(g, d){
 		if (g.children.length == 0) {
@@ -335,7 +331,6 @@ function findChildren(goroutine) {
 		return children;
 }
 
-
 function toRadians(degrees) {
 		return degrees * (Math.PI/180);
 }
@@ -357,7 +352,7 @@ function drawArrow(origin, tip, color, textt){
 		const midpoint = getMidPoint(tip, origin);
 
 		var direction = new THREE.Vector3().subVectors(tip, origin);
-		
+
 		var arrowHelper = new THREE.ArrowHelper(direction.clone().normalize(),
 		origin, direction.length(), color, 0.55);
 
@@ -370,9 +365,6 @@ function drawArrow(origin, tip, color, textt){
 		scene.add(arrowHelper);
 		scene.add(arrowLabel);
 }
-
-
-// drawArrow(new THREE.Vector3(0, 0, 0), new THREE.Vector3(1,1,1), "blue", "cau");
 
 function drawAllGoroutines(g) {
 		// clearScene();
@@ -387,7 +379,7 @@ function drawAllGoroutines(g) {
 		drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
 					g.vecStart.z, 0.35, 0.003, "purple");
 
-		var deg = 0;
+		var deg = 1 + Math.floor(Math.random() * 359);
 		for (var i = 0; i < g.children.length; i++) {
 				deg += (360 / g.children.length);
 				var mul = 1;
@@ -435,7 +427,6 @@ function drawCommunication() {
 				var arrTip = new THREE.Vector3(g.vecStart.x, tipY, g.vecStart.z);
 				drawArrow(arrOrigin, arrTip, ARROW_COLOR, recValue);
 			}
-
 	}
 }
 
@@ -622,7 +613,6 @@ function setCamera(){
 	var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
 	camera.position.z = 6;
 	camera.position.y = -4;
-	//camera.position.x = -3;
 	camera.lookAt(0, 0, 6);
 	return camera;
 }
