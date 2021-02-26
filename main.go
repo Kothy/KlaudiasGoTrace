@@ -25,8 +25,6 @@ var mutex = &sync.Mutex{}
 type Chan struct {
 	Name string
 	Ch   interface{}
-	//ChSend chan<- interface{}
-	//ChRec <-chan interface{}
 }
 
 type Command struct {
@@ -81,7 +79,7 @@ func isChannel(ch interface{}) bool {
 	return false
 }
 
-//func SendToChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+//func SendToChannel(value interface{}, channel chan int) {
 func SendToChannel(value interface{}, channel interface{}) {
 
 	if !isChannel(channel) {
@@ -110,56 +108,6 @@ func findChannel(ch interface{}) string {
 	return ""
 }
 
-//func createChannel(ch chan int) string {
-//func createChannel(ch interface{}) string {
-//	mutex.Lock()
-//	chanName := randomString()
-//	for isName(chanName) {
-//		chanName = randomString()
-//	}
-//
-//	channnn := ch
-//	fmt.Println("Vytvaram kanal s typom: ",reflect.TypeOf(channnn).String())
-//	chType := reflect.TypeOf(ch).String()
-//
-//	if strings.Contains(chType, "<-chan") {
-//		chch := ch.(<-chan interface{})
-//		channels = append(channels, &Chan{
-//			Name: chanName,
-//			ChRec:   chch,
-//			Ch: nil,
-//			ChSend: nil,
-//
-//		})
-//	} else if strings.Contains(chType, "chan<-") {
-//		chch := ch.(chan<- interface{})
-//		channels = append(channels, &Chan{
-//			Name: chanName,
-//			ChSend:   chch,
-//			ChRec:   nil,
-//			Ch: nil,
-//		})
-//	} else {
-//		chch := ch.(chan interface{})
-//		chch2 := ch.(<-chan interface{})
-//		chch3 := ch.(chan<- interface{})
-//		channels = append(channels, &Chan{
-//			Name: chanName,
-//			Ch:   chch,
-//			ChRec: chch2,
-//			ChSend: chch3,
-//		})
-//	}
-//
-//	channels = append(channels, &Chan{
-//				Name: chanName,
-//				Ch:   ch,
-//			})
-//
-//	mutex.Unlock()
-//	return chanName
-//}
-
 func createChannel(ch interface{}) string {
 	mutex.Lock()
 	chanName := randomString()
@@ -183,7 +131,7 @@ func isName(value string) bool {
 	return false
 }
 
-//func ReceiveFromChannel(value interface{}, channel chan int) { // prerobit aby to zvladlo aj <-chan (read only) alebo chan<- (write only)
+//func ReceiveFromChannel(value interface{}, channel chan int) {
 func ReceiveFromChannel(value interface{}, channel interface{}) {
 	if !isChannel(channel) {
 		return
