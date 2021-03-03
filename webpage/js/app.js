@@ -380,7 +380,11 @@ function drawAllGoroutines(g) {
 
 		var deg = 1 + Math.floor(Math.random() * 359);
 		for (var i = 0; i < g.children.length; i++) {
-				deg += (360 / g.children.length);
+				childrenNum = g.children.length
+				if (childrenNum == 2) {
+					childrenNum = 3;
+				}
+				deg += (360 / childrenNum);
 				var mul = 1;
 				if (g.children[i].children.length > 0) {
 					mul = 1.8;
