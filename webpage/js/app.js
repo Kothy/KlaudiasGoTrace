@@ -283,7 +283,7 @@ function loadJson() {
 
 		setTimeout(function(){resetScene();}, 100);
 		setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
-		//setTimeout(function(){drawCommunication();}, 100);
+		setTimeout(function(){drawCommunication();}, 100);
 
 		var mainGoroutine = goroutines[0];
 		var start = mainGoroutine.vecStart;
@@ -295,7 +295,6 @@ function loadJson() {
 
 		camera.lookAt(0, ((start.y + end.y)/2), -1);
 		//camera.lookAt(0, 0, 0);
-
 		setControls();
 }
 
@@ -586,8 +585,6 @@ function checkLoading() {
 	}
 	return false;
 }
-
-
 
 function setScene(){
 	var scene = new THREE.Scene();
