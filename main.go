@@ -209,7 +209,6 @@ func toJson(events []*Event) {
 					Id:       int64(event.GorutineId),
 					ParentId: parentId64,
 				}
-				commands = append(commands, &cmd)
 				if event.strArgs[1] == "GoroutineStart" {
 					goroutines[int64(event.GorutineId)] = false
 					gParents[int64(event.GorutineId)] = int64(event.ParentId)
@@ -269,6 +268,7 @@ func writeJson(json string) {
 
 func EndTrace() {
 	StopGoroutine()
+
 	trace.Stop()
 
 	events := MyReadTrace(traceFileName + ".out")
