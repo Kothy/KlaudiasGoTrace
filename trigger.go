@@ -1,6 +1,7 @@
-package KlaudiasGoTrace
+package main
 
 import (
+	"KlaudiasGoTrace/KlaudiasGoTrace"
 	"fmt"
 	"github.com/sqweek/dialog"
 	"log"
@@ -9,18 +10,15 @@ import (
 	"strings"
 )
 
-func main() {
-	getPathAndTraceFile()
-}
-
 func getPathAndTraceFile() {
 	filepath, err := dialog.File().Title("Select Go file").Filter("Go Files", "go").Load()
 
 	if err != nil {
 		fmt.Println("Error:", err)
 	} else {
-		parsedProgram := Parse(filepath)
+		//KlaudiasGoTrace.Parse(filepath)
 
+		parsedProgram := KlaudiasGoTrace.Parse(filepath)
 		cmd := exec.Command("go", "run", parsedProgram)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
@@ -39,4 +37,8 @@ func getPathAndTraceFile() {
 			}
 		}
 	}
+}
+
+func main() {
+	getPathAndTraceFile()
 }

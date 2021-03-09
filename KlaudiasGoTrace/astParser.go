@@ -250,6 +250,17 @@ func fullFillFuncArrays(node ast.Node) {
 	})
 }
 
+func addAssignStmt(funcDecl *ast.FuncDecl, left string, typ token.Token, right string) {
+	leftExpr, _ := parser.ParseExpr(left)
+	rightExpr, _ := parser.ParseExpr(right)
+	assign := ast.AssignStmt{
+		Tok: token.DEFINE,
+		Lhs: []ast.Expr{leftExpr},
+		Rhs: []ast.Expr{rightExpr},
+	}
+	funcDecl.Body.List = prepend(funcDecl.Body.List, &assign)
+}
+
 func addStartStopToMain(funDecl *ast.FuncDecl) {
 	addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StartTrace()", true)
 	addExprToFuncDecl(funDecl, "KlaudiasGoTrace.EndTrace()", false)
@@ -312,15 +323,6 @@ func createFileFromAST(filename string, data string) string {
 	return fileName
 }
 
-func fileExists(name string) bool {
-	if _, err := os.Stat(name); err != nil {
-		if os.IsNotExist(err) {
-			return false
-		}
-	}
-	return true
-}
-
 func Parse(filePath string) string {
 	fset = token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
@@ -335,7 +337,7 @@ func Parse(filePath string) string {
 	root = node
 
 	fullFillFuncArrays(node)
-	addImport("KlaudiasGoTrace")
+	addImport("KlaudiasGoTrace/KlaudiasGoTrace")
 
 	ast.Inspect(node, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
@@ -351,6 +353,7 @@ func Parse(filePath string) string {
 			}
 
 			if funcName == "main" {
+				addAssignStmt(funDecl, "parentId", token.INT, "uint64(0)")
 				addStartStopToMain(funDecl)
 			}
 		}
