@@ -8,7 +8,9 @@ import (
 	"go/printer"
 	"go/token"
 	"golang.org/x/tools/go/ast/astutil"
+	"io"
 	"log"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
@@ -17,11 +19,13 @@ import (
 var goFuncs []string
 var allFuncs []string
 var fset *token.FileSet
+var root *ast.File
+var fileName string
 
 func toString(fset *token.FileSet, file interface{}) string {
 	var buffer bytes.Buffer
 	printer.Fprint(&buffer, fset, file)
-	return buffer.String()
+	return prettify(buffer.String())
 }
 
 func repr(str string) string {
@@ -121,12 +125,9 @@ func getChanNameAndVariable(line string) (string, string) {
 		splitted2 := strings.Split(splitted[0], "=")
 		varName = strings.TrimSpace(splitted2[0])
 	}
-
-	//fmt.Println("premenna:", varName, ", kanal:", chanName)
 	return varName, chanName
 }
 
-// hladanie vsetkych posielani kanalom v deklaracii funkcie
 func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 	ast.Inspect(funDecl, func(n ast.Node) bool {
 		block, ok := n.(*ast.BlockStmt)
@@ -144,7 +145,6 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 				ast.Inspect(block.List[sendIndex], func(n ast.Node) bool {
 					chanSend, ok := n.(*ast.SendStmt)
 					if ok {
-						//	fmt.Println(strconv.Itoa(fset.Position(chanSend.Pos()).Line), ", meno kanala:", chanName)
 						chanName := fmt.Sprint(chanSend.Chan)
 						value := fmt.Sprint(chanSend.Value)
 						exprStr := fmt.Sprintf("KlaudiasGoTrace.SendToChannel(%s, %s)", value, chanName)
@@ -162,13 +162,6 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 }
 
 func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
-	// hladanie vsetkych prijati kanalom
-	//chrecv, ok := n.(*ast.UnaryExpr)
-	//if ok {
-	//	if chrecv.Op.String() == "<-" {
-	//		fmt.Println(strconv.Itoa(fset.Position(chrecv.Pos()).Line))
-	//	}
-	//}
 	astutil.Apply(funDecl, func(cursor *astutil.Cursor) bool {
 		block, ok := cursor.Node().(*ast.BlockStmt)
 		if ok {
@@ -257,56 +250,119 @@ func fullFillFuncArrays(node ast.Node) {
 	})
 }
 
-func Parse(filePath string) {
+func addStartStopToMain(funDecl *ast.FuncDecl) {
+	addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StartTrace()", true)
+	addExprToFuncDecl(funDecl, "KlaudiasGoTrace.EndTrace()", false)
+}
+
+func addImport(importString string) {
+	ast.Inspect(root, func(n ast.Node) bool {
+		genDecl, ok := n.(*ast.GenDecl)
+		if ok {
+			if genDecl.Tok == token.IMPORT {
+				iSpec := &ast.ImportSpec{Path: &ast.BasicLit{Value: strconv.Quote(importString)}}
+				genDecl.Specs = append(genDecl.Specs, iSpec)
+			}
+		}
+		return true
+	})
+}
+
+func prettify(uglyStr string) string {
+	prettyStr := strings.ReplaceAll(uglyStr, "KlaudiasGoTrace.\n\t\t", "KlaudiasGoTrace.")
+	prettyStr = strings.ReplaceAll(prettyStr, "KlaudiasGoTrace.\t", "KlaudiasGoTrace.")
+	prettyStr = strings.ReplaceAll(prettyStr, ",\n\t\t\t)", ",)")
+	prettyStr = strings.ReplaceAll(prettyStr, ",\n\t\t)", ",)")
+	prettyStr = strings.ReplaceAll(prettyStr, ",\n\n", ",")
+	prettyStr = strings.ReplaceAll(prettyStr, ",\n\n\t\t\t\t", ", ")
+	prettyStr = strings.ReplaceAll(prettyStr, "KlaudiasGoTrace.StartGoroutine(\n\t\t", "KlaudiasGoTrace.StartGoroutine(")
+	prettyStr = strings.ReplaceAll(prettyStr, ",\t\t\t\t", ", ")
+	prettyStr = strings.ReplaceAll(prettyStr, "KlaudiasGoTrace.GetGID(),\n", "KlaudiasGoTrace.GetGID(),")
+	return prettyStr
+}
+
+func writeToFile(filename string, data string) bool {
+	file, err := os.Create(filename)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, data)
+	if err != nil {
+		fmt.Println(err)
+		return false
+	}
+	return true
+}
+
+func createFileFromAST(filename string, data string) string {
+	fileVersion := 0
+	formatPostfix := "Parsed_.go"
+	postfix := "Parsed.go"
+	fileName := strings.ReplaceAll(filename, ".go", postfix)
+
+	for !writeToFile(fileName, data) {
+		fileVersion += 1
+		postfix = strings.ReplaceAll(formatPostfix, "_", strconv.Itoa(fileVersion))
+		fileName = strings.ReplaceAll(filename, ".go", postfix)
+	}
+
+	return fileName
+}
+
+func fileExists(name string) bool {
+	if _, err := os.Stat(name); err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
+func Parse(filePath string) string {
 	fset = token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatal(err)
 	}
+	var results []string
+
+	results = strings.Split(filePath, "\\")
+	fileName = results[len(results)-1]
+
+	root = node
 
 	fullFillFuncArrays(node)
-
-	//fmt.Println("vsetky funkcie: " , allFuncs)
-	//fmt.Println("vsetky go funkcie: ", goFuncs)
+	addImport("KlaudiasGoTrace")
 
 	ast.Inspect(node, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
 		if ok {
+			funcName := funDecl.Name.Name
 			addParamToFuncDecl(funDecl, "parentId", "uint64")
 			addSendToFuncDecl(funDecl)
 			addReceiveToFuncDecl(funDecl)
-		}
-		if ok && contains(goFuncs, funDecl.Name.Name) {
-			//fmt.Println(strconv.Itoa(fset.Position(funDecl.Pos()).Line), funDecl.Name.Name, len(funDecl.Type.Params.List))
-			addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StartGoroutine(parentId)", true)
-			addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StopGoroutine()", false)
+
+			if contains(goFuncs, funcName) {
+				addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StartGoroutine(parentId)", true)
+				addExprToFuncDecl(funDecl, "KlaudiasGoTrace.StopGoroutine()", false)
+			}
+
+			if funcName == "main" {
+				addStartStopToMain(funDecl)
+			}
 		}
 
-		//hladanie vsetkych volani
 		callEx, ok := n.(*ast.CallExpr)
 		if ok {
-			//fmt.Println(strconv.Itoa(fset.Position(callEx.Pos()).Line), callEx.Fun)
 			addExprToCall(callEx)
 		}
 
-		// hladanie vsetkych prijati kanalom
-		//chrecv, ok := n.(*ast.UnaryExpr)
-		//if ok {
-		//	if chrecv.Op.String() == "<-" {
-		//		fmt.Println(strconv.Itoa(fset.Position(chrecv.Pos()).Line))
-		//	}
-		//}
 		return true
 	})
+	//printTree(fset, node)
 
-	printTree(fset, node)
+	return createFileFromAST(fileName, toString(fset, node))
 }
-
-//func main() {
-//
-//}
-
-// vypisanie vsetkych parametrov funkcie
-//for i := 0; i < len(funDecl.Type.Params.List); i++ {
-//	fmt.Println(funDecl.Type.Params.List[i].Names[0].Name)
-//}

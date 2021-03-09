@@ -199,7 +199,7 @@ func toJson(events []*Event) {
 
 	//fmt.Println("Pole eventov je dlzky: ", len(events))
 	for _, event := range events {
-		fmt.Printf("%+v\n", event)
+		//fmt.Printf("%+v\n", event)
 		if event.Name == "UserLog" {
 			//fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
