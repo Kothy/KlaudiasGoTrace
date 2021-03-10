@@ -67,6 +67,12 @@ func Log(tag string, message string) {
 	trace.Log(ctx, tag, message)
 }
 
+func Use(vals ...interface{}) {
+	for _, val := range vals {
+		_ = val
+	}
+}
+
 func isinstanceof(value interface{}, typ string) bool {
 	return reflect.TypeOf(value).String() == typ
 }

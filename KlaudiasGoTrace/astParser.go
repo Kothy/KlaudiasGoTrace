@@ -353,6 +353,7 @@ func Parse(filePath string) string {
 			}
 
 			if funcName == "main" {
+				addExprToFuncDecl(funDecl, "KlaudiasGoTrace.Use(parentId)", true)
 				addAssignStmt(funDecl, "parentId", token.INT, "uint64(0)")
 				addStartStopToMain(funDecl)
 			}
@@ -368,4 +369,5 @@ func Parse(filePath string) string {
 	//printTree(fset, node)
 
 	return createFileFromAST(fileName, toString(fset, node))
+
 }
