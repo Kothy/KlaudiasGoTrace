@@ -323,23 +323,27 @@ func createFileFromAST(filename string, data string) string {
 	return fileName
 }
 
-func Parse(filePath string) string {
+func create(filePath string) {
 	fset = token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	root = node
+}
+
+func Parse(filePath string) string {
+	create(filePath)
 	var results []string
 
 	results = strings.Split(filePath, "\\")
 	fileName = results[len(results)-1]
 
-	root = node
-
-	fullFillFuncArrays(node)
+	fullFillFuncArrays(root)
 	addImport("KlaudiasGoTrace/KlaudiasGoTrace")
 
-	ast.Inspect(node, func(n ast.Node) bool {
+	ast.Inspect(root, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
 		if ok {
 			funcName := funDecl.Name.Name
@@ -368,7 +372,5 @@ func Parse(filePath string) string {
 		return true
 	})
 	//printTree(fset, node)
-
-	return createFileFromAST(fileName, toString(fset, node))
-
+	return createFileFromAST(fileName, toString(fset, root))
 }
