@@ -54,6 +54,7 @@ func StartTrace() {
 		traceFileName = "trace"
 	}
 
+	// ak nebude fungovat buffer odkomentuj
 	//f, err := os.Create(traceFileName + ".out")
 	//if err != nil {
 	//	panic(err)
@@ -68,14 +69,9 @@ func EndTrace() {
 
 	trace.Stop()
 
+	// ak nebude fungovat buffer odkomentuj
 	//events := MyReadTrace(traceFileName + ".out")
 	events := DoTrace(traceBuffer)
-
-	//err := os.Remove(traceFileName + ".out")
-	//
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
 
 	toJson(events)
 }
