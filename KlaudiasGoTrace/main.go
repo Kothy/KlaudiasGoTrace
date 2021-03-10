@@ -21,6 +21,7 @@ var traceFileName string
 var commands []*Command
 var channels []*Chan
 var mutex = &sync.Mutex{}
+var traceBuffer bytes.Buffer
 
 type Chan struct {
 	Name string
@@ -53,13 +54,30 @@ func StartTrace() {
 		traceFileName = "trace"
 	}
 
-	f, err := os.Create(traceFileName + ".out")
+	//f, err := os.Create(traceFileName + ".out")
+	//if err != nil {
+	//	panic(err)
+	//}
+	_ = trace.Start(&traceBuffer)
 
-	if err != nil {
-		panic(err)
-	}
-	_ = trace.Start(f)
 	StartGoroutine(0)
+}
+
+func EndTrace() {
+	StopGoroutine()
+
+	trace.Stop()
+
+	//events := MyReadTrace(traceFileName + ".out")
+	events := DoTrace(traceBuffer)
+
+	//err := os.Remove(traceFileName + ".out")
+	//
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	toJson(events)
 }
 
 func Log(tag string, message string) {
@@ -274,21 +292,6 @@ func writeJson(json string) {
 	if err2 != nil {
 		log.Fatal(err2)
 	}
-}
-
-func EndTrace() {
-	StopGoroutine()
-
-	trace.Stop()
-
-	events := MyReadTrace(traceFileName + ".out")
-	//err := os.Remove(traceFileName + ".out")
-	//
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
-	toJson(events)
 }
 
 func GetGID() uint64 {

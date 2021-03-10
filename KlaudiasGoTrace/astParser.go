@@ -353,9 +353,10 @@ func Parse(filePath string) string {
 			}
 
 			if funcName == "main" {
+				addStartStopToMain(funDecl)
 				addExprToFuncDecl(funDecl, "KlaudiasGoTrace.Use(parentId)", true)
 				addAssignStmt(funDecl, "parentId", token.INT, "uint64(0)")
-				addStartStopToMain(funDecl)
+
 			}
 		}
 

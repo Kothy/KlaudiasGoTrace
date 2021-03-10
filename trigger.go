@@ -7,7 +7,6 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"strings"
 )
 
 func getPathAndTraceFile() {
@@ -31,10 +30,10 @@ func getPathAndTraceFile() {
 				log.Fatal(e)
 			}
 
-			e = os.Remove(strings.ReplaceAll(parsedProgram, ".go", "Trace.out"))
-			if e != nil {
-				log.Fatal(e)
-			}
+			//e = os.Remove(strings.ReplaceAll(parsedProgram, ".go", "Trace.out"))
+			//if e != nil {
+			//	log.Fatal(e)
+			//}
 		}
 	}
 }

@@ -51,6 +51,20 @@ func MyReadTrace(filename string) []*Event {
 	return events
 }
 
+func DoTrace(buff bytes.Buffer) []*Event {
+
+	goVersion, rawEvents, uintStrings, _ := readTrace(&buff)
+
+	events, _, _ := parseEvents(goVersion, rawEvents, uintStrings)
+	nameEvents(events)
+
+	//for _, event := range events {
+	//	fmt.Printf("%+v\n", event)
+	//}
+
+	return events
+}
+
 type Event struct {
 	Name       string
 	Offset     int       // Offset in input file (for debugging and error reporting)
