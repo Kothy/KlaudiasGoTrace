@@ -21,14 +21,14 @@ func getPathAndTraceFile() {
 		cmd := exec.Command("go", "run", parsedProgram)
 		cmd.Stdout = os.Stdout
 		cmd.Stderr = os.Stderr
-		err := cmd.Run()
+		//err := cmd.Run()
 		if err != nil {
 			log.Fatalf("cmd.Run() failed with %s\n", err)
 		} else {
-			e := os.Remove(parsedProgram)
-			if e != nil {
-				log.Fatal(e)
-			}
+			//e := os.Remove(parsedProgram)
+			//if e != nil {
+			//	log.Fatal(e)
+			//}
 
 			//e = os.Remove(strings.ReplaceAll(parsedProgram, ".go", "Trace.out"))
 			//if e != nil {

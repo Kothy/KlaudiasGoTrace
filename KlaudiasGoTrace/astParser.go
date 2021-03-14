@@ -146,7 +146,7 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 					chanSend, ok := n.(*ast.SendStmt)
 					if ok {
 						chanName := fmt.Sprint(chanSend.Chan)
-						value := fmt.Sprint(chanSend.Value)
+						value := toString(fset, chanSend.Value)
 						exprStr := fmt.Sprintf("KlaudiasGoTrace.SendToChannel(%s, %s)", value, chanName)
 						expr3, _ := parser.ParseExpr(exprStr)
 						stmt3 := ast.ExprStmt{X: expr3}
@@ -213,12 +213,27 @@ func addExprToFuncDecl(funDecl *ast.FuncDecl, strExpr string, toStart bool) {
 	}
 }
 
+func addExprToFuncLit(funLit *ast.FuncLit, strExpr string, toStart bool) {
+	expr, _ := parser.ParseExpr(strExpr)
+	stmt := ast.ExprStmt{X: expr}
+	if toStart == true {
+		funLit.Body.List = prepend(funLit.Body.List, &stmt)
+	} else {
+		funLit.Body.List = append(funLit.Body.List, &stmt)
+	}
+}
+
 func addParamToFuncDecl(funDecl *ast.FuncDecl, name string, typ string) {
 	funcName := funDecl.Name.Name
 	if funcName != "main" {
 		field := newField(name, typ)
 		funDecl.Type.Params.List = append(funDecl.Type.Params.List, field)
 	}
+}
+
+func addParamToFuncLit(funLit *ast.FuncLit, name string, typ string) {
+	field := newField(name, typ)
+	funLit.Type.Params.List = append(funLit.Type.Params.List, field)
 }
 
 func addExprToCall(callEx *ast.CallExpr) {
@@ -231,6 +246,16 @@ func addExprToCall(callEx *ast.CallExpr) {
 		callEx.Args = append(callEx.Args, expr)
 	}
 }
+
+func addExprToCallGID(callEx *ast.CallExpr) {
+	expr, _ := parser.ParseExpr("KlaudiasGoTrace.GetGID()")
+	callEx.Args = append(callEx.Args, expr)
+}
+
+//func addExprToCallParent(callEx *ast.CallExpr) {
+//	expr, _ := parser.ParseExpr("parentId")
+//	callEx.Args = append(callEx.Args, expr)
+//}
 
 func fullFillFuncArrays(node ast.Node) {
 	ast.Inspect(node, func(n ast.Node) bool {
@@ -323,6 +348,34 @@ func createFileFromAST(filename string, data string) string {
 	return fileName
 }
 
+func anonymFunctions() {
+	var calls []*ast.CallExpr
+
+	ast.Inspect(root, func(n ast.Node) bool {
+		fungo, ok := n.(*ast.GoStmt)
+		if ok {
+			anonymFunc := toString(fset, fungo.Call.Fun)
+
+			//fmt.Println(anonymFunc)
+			if strings.HasPrefix(anonymFunc, "func(") {
+				calls = append(calls, fungo.Call)
+				funcexpr, _ := parser.ParseExpr(anonymFunc)
+				funcD := funcexpr.(*ast.FuncLit)
+				addParamToFuncLit(funcD, "parentId", "uint64")
+				addExprToFuncLit(funcD, "KlaudiasGoTrace.StartGoroutine(parentId)", true)
+				addExprToFuncLit(funcD, "KlaudiasGoTrace.StopGoroutine()", false)
+
+				fungo.Call.Fun = funcexpr
+			}
+		}
+		return true
+	})
+
+	for _, call := range calls {
+		addExprToCallGID(call)
+	}
+}
+
 func create(filePath string) {
 	fset = token.NewFileSet()
 	node, err := parser.ParseFile(fset, filePath, nil, parser.ParseComments)
@@ -336,7 +389,6 @@ func create(filePath string) {
 func Parse(filePath string) string {
 	create(filePath)
 	var results []string
-
 	results = strings.Split(filePath, "\\")
 	fileName = results[len(results)-1]
 
@@ -346,6 +398,7 @@ func Parse(filePath string) string {
 	ast.Inspect(root, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
 		if ok {
+
 			funcName := funDecl.Name.Name
 			addParamToFuncDecl(funDecl, "parentId", "uint64")
 			addSendToFuncDecl(funDecl)
@@ -360,7 +413,6 @@ func Parse(filePath string) string {
 				addStartStopToMain(funDecl)
 				addExprToFuncDecl(funDecl, "KlaudiasGoTrace.Use(parentId)", true)
 				addAssignStmt(funDecl, "parentId", token.INT, "uint64(0)")
-
 			}
 		}
 
@@ -372,5 +424,7 @@ func Parse(filePath string) string {
 		return true
 	})
 	//printTree(fset, node)
+	anonymFunctions()
+
 	return createFileFromAST(fileName, toString(fset, root))
 }
