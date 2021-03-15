@@ -237,12 +237,9 @@ func addParamToFuncLit(funLit *ast.FuncLit, name string, typ string) {
 }
 
 func addExprToCall(callEx *ast.CallExpr) {
-	//funName := fmt.Sprint(callEx.Fun)
 	funName := toString(fset, callEx.Fun)
 	results := strings.Split(funName, ".")
 	funName = results[len(results)-1]
-
-	//fmt.Println(funName)
 
 	if contains(goFuncs, funName) {
 		expr, _ := parser.ParseExpr("KlaudiasGoTrace.GetGID()")
