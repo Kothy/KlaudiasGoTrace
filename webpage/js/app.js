@@ -9,22 +9,24 @@ var renderer;
 var camera;
 var ambientLight;
 var controls;
-var spinner;
 var drawingThread;
-spinner = null;
-var WINDOW_CUT;
-WINDOW_CUT = 21;
-var ARROW_COLOR;
-ARROW_COLOR = "#DC143C"
-var ONE_FRAME;
-ONE_FRAME = 0.0000001;
+var loadingScreen;
 var loader;
 var font;
-let THICKNESS = 0.02;
-let MAXLEN = 10;
+
+let spinner = null;
 let division = 1;
-var loadingScreen;
-var RESOURCES_LOADED = true;
+let WINDOW_CUT = 21;
+let ARROW_COLOR = "#DC143C"
+let GNAME_COLOR = "purple"
+let GBODY_COLOR = "blue";
+let GREEN_COLOR = "#55db30"
+let ONE_FRAME = 0.0000001;
+let THICKNESS = 0.02;
+let THICKNESS2 = 0.007;
+let MAXLEN = 10;
+let RESOURCES_LOADED = true;
+
 
 class Goroutine {
 	constructor(id, parentId, start) {
@@ -123,7 +125,7 @@ function setLoadScreen() {
 		light: new THREE.AmbientLight(0xffffff,1.0),
 		box: new THREE.Mesh(
 			new THREE.TextGeometry("Drawing",{font: font,size: 1,height: 0.5}),
-			new THREE.MeshBasicMaterial({color: "green"})
+			new THREE.MeshBasicMaterial({color: GREEN_COLOR})
 		)
 	};
 	loadingScreen.scene.background = new THREE.Color("rgb(255, 255, 255)");
@@ -160,7 +162,7 @@ function openFile(event) {
 			var text = reader.result;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
-			drawText("Drawing", font, 0, 0, 0, 3, 0.5, "purple");
+			drawText("Drawing", font, 0, 0, 0, 3, 0.5, GNAME_COLOR);
 			Notiflix.Notify.Success('Drawing');
 
 			setTimeout(loadJson, 100);
@@ -346,7 +348,7 @@ function getMidPoint(a, b) {
 		return new THREE.Vector3((a.x + b.x)/2, (a.y + b.y)/2, (a.z + b.z)/2);
 }
 
-function drawArrow(origin, tip, color, textt){
+function drawArrowWithText(origin, tip, color, textt){
 		const length = origin.distanceTo(tip);
 		const midpoint = getMidPoint(tip, origin);
 
@@ -358,9 +360,8 @@ function drawArrow(origin, tip, color, textt){
 		var arrowLabel = createText(textt, font, midpoint.x, midpoint.y + 0.1, midpoint.z, 0.2, 0.003, color);
 
 		arrowLabel.setRotationFromEuler(arrowHelper.rotation);
-		// arrowLabel.rotateZ(toRadians(90));
-		texts.push(arrowLabel);
 
+		texts.push(arrowLabel);
 		scene.add(arrowHelper);
 		scene.add(arrowLabel);
 }
@@ -374,9 +375,9 @@ function drawAllGoroutines(g) {
 		var y2 = vecEnd.y;
 		var z = vecStart.z;
 		var name = g.id == 1 ? 'main' : "#" + g.id;
-		drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, "blue");
+		drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, GBODY_COLOR);
 		drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
-					g.vecStart.z, 0.35, 0.003, "purple");
+					g.vecStart.z, 0.35, 0.003, GNAME_COLOR);
 
 		var deg = 1 + Math.floor(Math.random() * 359);
 		for (var i = 0; i < g.children.length; i++) {
@@ -402,8 +403,11 @@ function drawAllGoroutines(g) {
 				var lVec = new THREE.Vector3(x ,yy, z);
 				var lVec2 = new THREE.Vector3(x ,yy2, z);
 
-				drawSimpleLine(lVec, g.children[i].vecStart, "green");
-				drawSimpleLine(lVec2, g.children[i].vecEnd, "green");
+				// drawSimpleLine(lVec, g.children[i].vecStart, "green");
+				// drawSimpleLine(lVec2, g.children[i].vecEnd, "green");
+
+				drawLineWithThickness(lVec, g.children[i].vecStart, THICKNESS2, GREEN_COLOR);
+				drawLineWithThickness(lVec2, g.children[i].vecEnd, THICKNESS2, GREEN_COLOR);
 
 		}
 		for (var i = 0; i < g.children.length; i++) {
@@ -428,7 +432,12 @@ function drawCommunication() {
 				var tipY = calculateYFromTimeWDiv(timeReceived);
 				var arrOrigin = new THREE.Vector3(sendG.vecStart.x, tipY, sendG.vecStart.z);
 				var arrTip = new THREE.Vector3(g.vecStart.x, tipY, g.vecStart.z);
-				drawArrow(arrOrigin, arrTip, ARROW_COLOR, recValue);
+				if (sendG.id != g.id) {
+						drawArrowWithText(arrOrigin, arrTip, ARROW_COLOR, recValue);
+				} else {
+						drawText(recValue, font, arrTip.x, tipY, arrTip.z, 0.2, 0.003, ARROW_COLOR);
+				}
+
 			}
 	}
 }
@@ -442,26 +451,47 @@ function getGoroutineById(id) {
 	return null;
 }
 
-function drawLineWithThickness(startV, endV, thick, color) {
-		let len = startV.distanceTo(endV);
-		let x1 = startV.x;
-		let y1 = startV.y;
-		let z1 = startV.z;
-		let x2 = endV.x;
-		let y2 = endV.y;
-		let z2 = endV.z;
-		let midX = (x1 + x2) / 2;
-		let midY = (y1 + y2) / 2;
-		let midZ = (z1 + z2) / 2;
-		const geometry = new THREE.CylinderGeometry(thick, thick, len, 35);
-		const material = new THREE.MeshBasicMaterial({color: color});
-		const cylinder = new THREE.Mesh(geometry, material);
+// function drawLineWithThickness(startV, endV, thick, color) {
+// 		let len = startV.distanceTo(endV);
+// 		let x1 = startV.x;
+// 		let y1 = startV.y;
+// 		let z1 = startV.z;
+// 		let x2 = endV.x;
+// 		let y2 = endV.y;
+// 		let z2 = endV.z;
+// 		let midX = (x1 + x2) / 2;
+// 		let midY = (y1 + y2) / 2;
+// 		let midZ = (z1 + z2) / 2;
+// 		const geometry = new THREE.CylinderGeometry(thick, thick, len, 6);
+// 		const material = new THREE.MeshBasicMaterial({color: color});
+// 		const cylinder = new THREE.Mesh(geometry, material);
+//
+// 		cylinder.position.x = midX;
+// 		cylinder.position.y = midY;
+// 		cylinder.position.z = midZ;
+//
+// 		scene.add(cylinder);
+// }
 
-		cylinder.position.x = midX;
-		cylinder.position.y = midY;
-		cylinder.position.z = midZ;
+function drawLineWithThickness(pointX, pointY, thick, color) {
+		var direction = new THREE.Vector3().subVectors(pointY, pointX);
+	  var orientation = new THREE.Matrix4();
+	  orientation.lookAt(pointX, pointY, new THREE.Object3D().up);
+	  orientation.multiply(new THREE.Matrix4().set(1, 0, 0, 0,
+	                0, 0, 1, 0,
+	                0, -1, 0, 0,
+	                0, 0, 0, 1));
+	  var edgeGeometry = new THREE.CylinderGeometry(thick, thick, direction.length(), 6);
+		var material = new THREE.MeshBasicMaterial({color: color});
+	  var edge = new THREE.Mesh(edgeGeometry, material);
+	  edge.applyMatrix(orientation);
 
-		scene.add(cylinder);
+	  edge.position.x = (pointY.x + pointX.x) / 2;
+	  edge.position.y = (pointY.y + pointX.y) / 2;
+	  edge.position.z = (pointY.z + pointX.z) / 2;
+
+		scene.add(edge);
+	  return edge;
 }
 
 function drawSimpleLine(start, end, color){
@@ -484,7 +514,7 @@ function random(min, max) {
 	return Math.floor(Math.random() * (max - min) + min);
 }
 
-function drawText(text, font, x, y, z, size, height, color){
+function drawText(text, font, x, y, z, size, height, color) {
 		var geometryText = new THREE.TextGeometry(text, {
 				font: font, size: size, height: height});
 
@@ -533,16 +563,9 @@ function createText(text, font, x, y, z, size, height, color){
 		var materialText = new THREE.MeshLambertMaterial({color: color});
 		var meshText = new THREE.Mesh(geometryText, materialText);
 
-		// objects.push(materialText);
-		// objects.push(meshText);
-		// objects.push(geometryText);
-
 		meshText.position.y = y;
 		meshText.position.x = x;
 		meshText.position.z = z;
-		//scene.add(meshText);
-
-		// texts.push(meshText);
 		return meshText;
 }
 

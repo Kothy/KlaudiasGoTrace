@@ -152,9 +152,9 @@ func isName(value string) bool {
 }
 
 //func ReceiveFromChannel(value interface{}, channel chan int) {
-func ReceiveFromChannel(value interface{}, channel interface{}) {
+func ReceiveFromChannel(value interface{}, channel interface{}) interface{} {
 	if !isChannel(channel) {
-		return
+		return nil
 	}
 
 	//fmt.Println("Prijate z: ", channel)
@@ -165,6 +165,8 @@ func ReceiveFromChannel(value interface{}, channel interface{}) {
 	chanName := findChannel(channel)
 
 	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
+
+	return value
 
 }
 

@@ -145,7 +145,7 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 				ast.Inspect(block.List[sendIndex], func(n ast.Node) bool {
 					chanSend, ok := n.(*ast.SendStmt)
 					if ok {
-						chanName := fmt.Sprint(chanSend.Chan)
+						chanName := toString(fset, chanSend.Chan)
 						value := toString(fset, chanSend.Value)
 						exprStr := fmt.Sprintf("KlaudiasGoTrace.SendToChannel(%s, %s)", value, chanName)
 						expr3, _ := parser.ParseExpr(exprStr)
@@ -237,7 +237,13 @@ func addParamToFuncLit(funLit *ast.FuncLit, name string, typ string) {
 }
 
 func addExprToCall(callEx *ast.CallExpr) {
-	funName := fmt.Sprint(callEx.Fun)
+	//funName := fmt.Sprint(callEx.Fun)
+	funName := toString(fset, callEx.Fun)
+	results := strings.Split(funName, ".")
+	funName = results[len(results)-1]
+
+	//fmt.Println(funName)
+
 	if contains(goFuncs, funName) {
 		expr, _ := parser.ParseExpr("KlaudiasGoTrace.GetGID()")
 		callEx.Args = append(callEx.Args, expr)
@@ -252,17 +258,16 @@ func addExprToCallGID(callEx *ast.CallExpr) {
 	callEx.Args = append(callEx.Args, expr)
 }
 
-//func addExprToCallParent(callEx *ast.CallExpr) {
-//	expr, _ := parser.ParseExpr("parentId")
-//	callEx.Args = append(callEx.Args, expr)
-//}
-
 func fullFillFuncArrays(node ast.Node) {
 	ast.Inspect(node, func(n ast.Node) bool {
 		// hladanie vsetkych deklaraácii funkcii, ktore vystupuju ako gorutiny
 		fungo, ok := n.(*ast.GoStmt)
 		if ok {
-			name := getFuncName(toString(fset, fungo))
+			//name := getFuncName(toString(fset, fungo))
+			name := toString(fset, fungo.Call.Fun)
+			names := strings.Split(name, ".")
+			name = names[len(names)-1]
+			//fmt.Println("taketo meno zistujem na go volanie:" , name)
 			goFuncs = append(goFuncs, name)
 		}
 
@@ -356,7 +361,6 @@ func anonymFunctions() {
 		if ok {
 			anonymFunc := toString(fset, fungo.Call.Fun)
 
-			//fmt.Println(anonymFunc)
 			if strings.HasPrefix(anonymFunc, "func(") {
 				calls = append(calls, fungo.Call)
 				funcexpr, _ := parser.ParseExpr(anonymFunc)
