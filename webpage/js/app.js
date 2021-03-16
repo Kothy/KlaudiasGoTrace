@@ -1,32 +1,33 @@
-
 var texts = [];
 var goroutines = [];
 var channels = new Map();
 var jsonArray = [];
 var commObjs = [];
 var namesObjs = [];
+var goroutinesObjs = [];
+var parentsObjs = [];
+var objects = [];
 var scene;
 var renderer;
 var camera;
 var ambientLight;
 var controls;
-var drawingThread;
-var loadingScreen;
 var loader;
 var font;
+
 
 let spinner = null;
 let division = 1;
 let WINDOW_CUT = 21;
 let ARROW_COLOR = "#DC143C"
-let GNAME_COLOR = "purple"
-let GBODY_COLOR = "blue";
-let GREEN_COLOR = "#55db30"
+let GNAME_COLOR = "#800080"
+let GBODY_COLOR = "#0040ff";
+let PARENT_COLOR = "#55db30";
+let BG_COLOR = "#282c34";
 let ONE_FRAME = 0.0000001;
 let THICKNESS = 0.02;
 let THICKNESS2 = 0.007;
 let MAXLEN = 10;
-let RESOURCES_LOADED = true;
 
 
 class Goroutine {
@@ -106,62 +107,90 @@ function mainApp(){
 		scene = setScene();
 		renderer = setRenderer();
 		camera = setCamera();
+		controls = setControls();
 		setWindow();
 		ambientLight = setLight();
 
-		controls = setControls();
-
 		loader = new THREE.FontLoader();
-		font = loader.parse(cambriaMathFont);
+		// font = loader.parse(cambriaMathFont);
+		font = loader.parse(cambriaFont);
 
-		setLoadScreen();
-
-	// 	var settings = {
-	// 		  message: "dat.GUI",
-	// 		  checkbox: true,
-	// 		  colorA: '#FF00B4',
-	// 		  colorB: '#22CBFF',
-	// 		  step5: 20,
-	// 		  range: 500,
-	// 		  options:"Option 1",
-	// 		  speed:0,
-	// 		  field1: "Field 1",
-	// 		  field2: "Field 2",
-	// };
-	//
-	// 	const gui = new dat.GUI();
-	//
-	// 	gui.add(settings, 'checkbox').name("Zobraz komunikáciu")
-	// 	.onChange(function (value) {
-  // 			checkboxCommunication(null);
-	// 	});
-	// 	gui.add(settings, 'checkbox').name("Zobraz mená gorutín")
-	// 	.onChange(function (value) {
-  // 			checkboxNames(null);
-	// 	});
-
-		const PARAMS = {
-  			Red: true
-		};
-		const PARAMS2 = {
-  			Purple: true
-		};
-
-		const pane = new Tweakpane({title: "Settings"});
-		const input = pane.addInput(PARAMS, 'Red');
-
-		input.on('change', function(ev) {
-  			// console.log(`change: ${ev.value}`);
-				checkboxCommunication(null);
-		});
-
-		const input2 = pane.addInput(PARAMS2, 'Purple');
-		input2.on('change', function(ev) {
-  			// console.log(`change: ${ev.value}`);
-				checkboxNames(null);
-		});
-
+		createSettings();
 		drawScene();
+}
+
+function createSettings(){
+	const PARAMS = {
+			Arrows: true,
+			Names: true,
+			Background: BG_COLOR,
+			GoroutinesCol: GBODY_COLOR,
+			ArrowsCol: ARROW_COLOR,
+			ParentsCol: PARENT_COLOR,
+			NamesCol: GNAME_COLOR,
+	};
+
+	const pane = new Tweakpane({title: "Settings"});
+	const input = pane.addInput(PARAMS, 'Arrows');
+
+	input.on('change', function(ev) {
+			// console.log(`change: ${ev.value}`);
+			checkboxCommunication(null);
+	});
+
+	const input2 = pane.addInput(PARAMS, 'Names');
+	input2.on('change', function(ev) {
+			// console.log(`change: ${ev.value}`);
+			checkboxNames(null);
+	});
+
+	const input3 = pane.addInput(PARAMS, 'Background');
+	input3.on('change', function(ev) {
+			scene.background = new THREE.Color(ev.value);
+			BG_COLOR = ec.value;
+	});
+
+	const input4 = pane.addInput(PARAMS, 'GoroutinesCol');
+	input4.on('change', function(ev) {
+		for (var i = 0; i < goroutinesObjs.length; i++) {
+				goroutinesObjs[i].material.color.set(ev.value);
+		}
+		GBODY_COLOR = ev.value;
+	});
+
+	const input5 = pane.addInput(PARAMS, 'ArrowsCol');
+	input5.on('change', function(ev) {
+		for (var i = 0; i < commObjs.length; i++) {
+			if (commObjs[i].type == "Mesh"){
+				commObjs[i].material.color.set(ev.value);
+			} else{
+				console.log(commObjs[i]);
+				if (commObjs[i].children[0])
+					commObjs[i].children[0].material.color.set(ev.value);
+
+				if (commObjs[i].children[1])
+					commObjs[i].children[1].material.color.set(ev.value);
+			}
+		}
+		ARROW_COLOR = ev.value;
+	});
+
+	const input6 = pane.addInput(PARAMS, 'ParentsCol');
+	input6.on('change', function(ev) {
+		for (var i = 0; i < parentsObjs.length; i++) {
+				parentsObjs[i].material.color.set(ev.value);
+		}
+		PARENT_COLOR = ev.value;
+
+	});
+
+	const input7 = pane.addInput(PARAMS, 'NamesCol');
+	input7.on('change', function(ev) {
+		for (var i = 0; i < namesObjs.length; i++) {
+				namesObjs[i].material.color.set(ev.value);
+		}
+		GNAME_COLOR = ev.value;
+	});
 }
 
 function checkboxCommunication(event){
@@ -176,26 +205,6 @@ function checkboxNames(event){
 		for (var i = 0; i < namesObjs.length; i++) {
 					namesObjs[i].visible = !namesObjs[i].visible;
 		}
-}
-
-function setLoadScreen() {
-	loadingScreen = {
-		scene: new THREE.Scene(),
-		camera: new THREE.PerspectiveCamera(75, width / height, 0.1, 1000),
-		light: new THREE.AmbientLight(0xffffff,1.0),
-		box: new THREE.Mesh(
-			new THREE.TextGeometry("Drawing",{font: font,size: 1,height: 0.5}),
-			new THREE.MeshBasicMaterial({color: GREEN_COLOR})
-		)
-	};
-	loadingScreen.scene.background = new THREE.Color("rgb(255, 255, 255)");
-	loadingScreen.camera.position.z = 6;
-	loadingScreen.camera.lookAt(0, -5, 0);
-	loadingScreen.box.geometry.center();
-
-	// loadingScreen.box.position.set(0,0,0);
-	loadingScreen.camera.lookAt(loadingScreen.box.position);
-	loadingScreen.scene.add(loadingScreen.box);
 }
 
 mainApp();
@@ -222,9 +231,9 @@ function openFile(event) {
 			var text = reader.result;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
-			drawText("Drawing", font, 0, 0, 0, 3, 0.5, GNAME_COLOR);
+			// drawText("Drawing", font, 0, 0, 0, 3, 0.5, GNAME_COLOR);
 			Notiflix.Notify.Success('Drawing');
-
+			resetScene();
 			setTimeout(loadJson, 100);
 		};
 
@@ -272,7 +281,7 @@ function sleep(sleepDuration){
 }
 
 function loadJson() {
-			// RESOURCES_LOADED = false;
+
 			goroutines = [];
 			channels = new Map();
 			texts = [];
@@ -337,13 +346,6 @@ function loadJson() {
 					g.setChildren(children);
 		}
 		setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
-
-		// for (var i = 0; i < goroutines.length; i++) {
-		// 		var g = goroutines[i];
-		// 		// console.log(g);
-		// }
-
-		setTimeout(function(){resetScene();}, 100);
 		setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
 		setTimeout(function(){drawCommunication();}, 100);
 
@@ -351,12 +353,10 @@ function loadJson() {
 		var start = mainGoroutine.vecStart;
 		var end = mainGoroutine.vecEnd;
 
-		camera.position.x = 0;
-		camera.position.y = -(max_len/2) * 2.5;
-		camera.position.z = -(max_len * 1.5);
+		camera.position.set(0, -max_len, 25);
 
-		camera.lookAt(0, ((start.y + end.y)/2), -1);
-		//camera.lookAt(0, 0, 0);
+
+		camera.lookAt(0, -(max_len), 0);
 		setControls();
 }
 
@@ -425,6 +425,9 @@ function drawArrowWithText(origin, tip, color, textt) {
 		scene.add(arrowHelper);
 		scene.add(arrowLabel);
 
+		objects.push(arrowHelper);
+		objects.push(arrowLabel);
+
 		return [arrowHelper, arrowLabel];
 }
 
@@ -437,7 +440,8 @@ function drawAllGoroutines(g) {
 		var y2 = vecEnd.y;
 		var z = vecStart.z;
 		var name = g.id == 1 ? 'main' : "#" + g.id;
-		drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, GBODY_COLOR);
+		var line = drawLineWithThickness(g.vecStart, g.vecEnd, THICKNESS, GBODY_COLOR);
+		goroutinesObjs.push(line);
 		var nameObj = drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
 					g.vecStart.z, 0.35, 0.003, GNAME_COLOR);
 
@@ -470,8 +474,10 @@ function drawAllGoroutines(g) {
 				// drawSimpleLine(lVec, g.children[i].vecStart, "green");
 				// drawSimpleLine(lVec2, g.children[i].vecEnd, "green");
 
-				drawLineWithThickness(lVec, g.children[i].vecStart, THICKNESS2, GREEN_COLOR);
-				drawLineWithThickness(lVec2, g.children[i].vecEnd, THICKNESS2, GREEN_COLOR);
+				var line1 = drawLineWithThickness(lVec, g.children[i].vecStart, THICKNESS2, PARENT_COLOR);
+				var line2 = drawLineWithThickness(lVec2, g.children[i].vecEnd, THICKNESS2, PARENT_COLOR);
+				parentsObjs.push(line1);
+				parentsObjs.push(line2);
 
 		}
 		for (var i = 0; i < g.children.length; i++) {
@@ -519,28 +525,6 @@ function getGoroutineById(id) {
 	return null;
 }
 
-// function drawLineWithThickness(startV, endV, thick, color) {
-// 		let len = startV.distanceTo(endV);
-// 		let x1 = startV.x;
-// 		let y1 = startV.y;
-// 		let z1 = startV.z;
-// 		let x2 = endV.x;
-// 		let y2 = endV.y;
-// 		let z2 = endV.z;
-// 		let midX = (x1 + x2) / 2;
-// 		let midY = (y1 + y2) / 2;
-// 		let midZ = (z1 + z2) / 2;
-// 		const geometry = new THREE.CylinderGeometry(thick, thick, len, 6);
-// 		const material = new THREE.MeshBasicMaterial({color: color});
-// 		const cylinder = new THREE.Mesh(geometry, material);
-//
-// 		cylinder.position.x = midX;
-// 		cylinder.position.y = midY;
-// 		cylinder.position.z = midZ;
-//
-// 		scene.add(cylinder);
-// }
-
 function drawLineWithThickness(pointX, pointY, thick, color) {
 		var direction = new THREE.Vector3().subVectors(pointY, pointX);
 	  var orientation = new THREE.Matrix4();
@@ -550,7 +534,9 @@ function drawLineWithThickness(pointX, pointY, thick, color) {
 	                0, -1, 0, 0,
 	                0, 0, 0, 1));
 	  var edgeGeometry = new THREE.CylinderGeometry(thick, thick, direction.length(), 6);
-		var material = new THREE.MeshBasicMaterial({color: color});
+		var material = new THREE.MeshBasicMaterial({
+			color: color,
+		});
 	  var edge = new THREE.Mesh(edgeGeometry, material);
 	  edge.applyMatrix4(orientation);
 
@@ -559,12 +545,13 @@ function drawLineWithThickness(pointX, pointY, thick, color) {
 	  edge.position.z = (pointY.z + pointX.z) / 2;
 
 		scene.add(edge);
+		objects.push(edge);
 	  return edge;
 }
 
 function drawSimpleLine(start, end, color){
 		const material = new THREE.LineBasicMaterial({
-				color: color
+				color: color,
 		});
 
 		const points = [];
@@ -574,6 +561,7 @@ function drawSimpleLine(start, end, color){
 		const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
 		const line = new THREE.Line(geometry, material);
+		objects.push(line);
 		scene.add(line);
 		return line;
 }
@@ -587,7 +575,9 @@ function drawText(text, font, x, y, z, size, height, color) {
 				font: font, size: size, height: height});
 
 		geometryText.center();
-		var materialText = new THREE.MeshLambertMaterial({color: color});
+		var materialText = new THREE.MeshBasicMaterial({
+			color: color,
+		});
 		var meshText = new THREE.Mesh(geometryText, materialText);
 
 		// objects.push(materialText);
@@ -598,37 +588,39 @@ function drawText(text, font, x, y, z, size, height, color) {
 		meshText.position.x = x;
 		meshText.position.z = z;
 		scene.add(meshText);
-
+		objects.push(meshText);
 		texts.push(meshText);
 		return meshText;
 }
 
-function drawTextSpin(text, size, height, color){
-		var geometryText = new THREE.TextGeometry(text,
-			{
-				font: font,
-				size: 1,
-				height: 0.5,
-			});
-
-		geometryText.center();
-		var materialText = new THREE.MeshBasicMaterial({color: color});
-		var meshText = new THREE.Mesh(geometryText, materialText);
-
-		meshText.position.y = 0;
-		meshText.position.x = 0;
-		meshText.position.z = 0;
-		// scene.add(meshText);
-
-		return meshText;
-}
+// function drawTextSpin(text, size, height, color){
+// 		var geometryText = new THREE.TextGeometry(text,
+// 			{
+// 				font: font,
+// 				size: 1,
+// 				height: 0.5,
+// 			});
+//
+// 		geometryText.center();
+// 		var materialText = new THREE.MeshBasicMaterial({color: color});
+// 		var meshText = new THREE.Mesh(geometryText, materialText);
+//
+// 		meshText.position.y = 0;
+// 		meshText.position.x = 0;
+// 		meshText.position.z = 0;
+// 		// scene.add(meshText);
+//
+// 		return meshText;
+// }
 
 function createText(text, font, x, y, z, size, height, color){
 		var geometryText = new THREE.TextGeometry(text, {
 				font: font, size: size, height: height});
 
 		geometryText.center();
-		var materialText = new THREE.MeshLambertMaterial({color: color});
+		var materialText = new THREE.MeshBasicMaterial({
+			color: color,
+		});
 		var meshText = new THREE.Mesh(geometryText, materialText);
 
 		meshText.position.y = y;
@@ -638,15 +630,14 @@ function createText(text, font, x, y, z, size, height, color){
 }
 
 function setControls(){
-	return new THREE.OrbitControls(camera,renderer.domElement);
+	var orbControls;
+	orbControls = new THREE.OrbitControls(camera, renderer.domElement);
+	return orbControls;
 }
 
 function drawScene(){
 
 	var update = function(){
-		// console.log("Kreslim scenu");
-		//object.rotation.x += 0.01;
-		//object.rotation.y += 0.001;
 
 		texts.forEach((item, i) => {
 			item.rotation.x = camera.rotation.x;
@@ -657,9 +648,9 @@ function drawScene(){
 	};
 	// draw scene
 	var render = function(){
-
 		renderer.render(scene,camera);
 	};
+
 	// run game loop (update, renderer, repeat)
 	var GameLoop = function(){
 		requestAnimationFrame(GameLoop);
@@ -683,7 +674,7 @@ function checkLoading() {
 
 function setScene(){
 	var scene = new THREE.Scene();
-	scene.background = new THREE.Color("#282c34");
+	scene.background = new THREE.Color(BG_COLOR);
 	// "#3cded3" - modrozelena
 	// "white" - biela
 	// "#cccccc" - slabo siva
@@ -701,21 +692,11 @@ function setRenderer(){
 function setCamera(){
 	width = window.innerWidth;
 	height = window.innerHeight - WINDOW_CUT;
-	var camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-	camera.position.z = 6;
-	camera.position.y = -4;
-	camera.lookAt(0, 0, 6);
+	var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+	// camera.position.z = -6;
+	// camera.position.y = -4;
+	// camera.lookAt(0, 0, 6);
 	return camera;
-}
-
-function setCameraPos(z) {
-		camera.position.z = z;
-}
-
-function printCamera(){
-		var lookAtVector = new THREE.Vector3(0,0, -1);
-		lookAtVector.applyQuaternion(camera.quaternion);
-		console.log(lookAtVector);
 }
 
 function setWindow(){
@@ -727,8 +708,6 @@ function setWindow(){
 		var width = window.innerWidth;
 		var height = window.innerHeight - WINDOW_CUT;
 		renderer.setSize(width,height);
-		camera.aspect = width / height;
-		camera.updateProjectionMatrix();
 	});
 }
 
@@ -736,6 +715,53 @@ function setLight(){
 	var ambientLight = new THREE.AmbientLight(0xffffff,1.0);
 	scene.add(ambientLight);
 	return ambientLight;
+
+	// const color = 0xFFFFFF;
+	// const intensity = 4;
+	// const light = new THREE.DirectionalLight(color, intensity);
+	// light.position.set(0, 10, 0);
+	// light.target.position.set(0, -10, 0);
+	// scene.add(light);
+	// scene.add(light.target);
+	//
+	// const light1 = new THREE.DirectionalLight(color, intensity);
+	// light1.position.set(0, 1, 0);
+	// light1.target.position.set(1, 1, 1);
+	// scene.add(light1);
+	// scene.add(light1.target);
+	//
+	// const light2 = new THREE.DirectionalLight(color, intensity);
+	// light2.position.set(0, -1, 0);
+	// light2.target.position.set(-1, 1, -1);
+	// scene.add(light2);
+	// scene.add(light1.target);
+
+	// const color = 0xFFFFFF;
+  //   const intensity = 1;
+  //   const light = new THREE.PointLight(color, intensity);
+  //   light.position.set(0, 5, 0);
+	//
+	// 	const helper = new THREE.PointLightHelper(light);
+  //   scene.add(helper);
+	//
+	// 	const light2 = new THREE.PointLight(color, intensity);
+  //   light2.position.set(-2, 20, -3);
+	//
+	// 	const light3 = new THREE.PointLight(color, intensity);
+  //   light3.position.set(2, 20, 3);
+	//
+	// 	const light4 = new THREE.PointLight(color, intensity);
+  //   light4.position.set(2, -20, 3);
+	//
+	// 	const light5 = new THREE.PointLight(color, intensity);
+  //   light5.position.set(-2, -20, -3);
+	//
+	// 	const light6 = new THREE.PointLight(color, 3);
+  //   light6.position.set(0, 0, 0);
+	//
+  //   scene.add(light, light2, light3, light4, light5, light6);
+
+	return light;
 }
 
 function getRandomColor() {
