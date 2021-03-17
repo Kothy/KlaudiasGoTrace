@@ -21,6 +21,7 @@ var traceFileName string
 var commands []*Command
 var channels []*Chan
 var sleeps = make(map[int64]int64)
+var blocks = make(map[int64]int64)
 var mutex = &sync.Mutex{}
 var traceBuffer bytes.Buffer
 
@@ -100,21 +101,6 @@ func isChannel(ch interface{}) bool {
 	return false
 }
 
-//func SendToChannel(value interface{}, channel chan int) {
-func SendToChannel(value interface{}, channel interface{}) {
-
-	if !isChannel(channel) {
-		return
-	}
-	chanName := findChannel(channel)
-	if chanName == "" {
-		chanName = createChannel(channel)
-	}
-
-	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineSend")
-}
-
-//func findChannel(ch chan int) string {
 func findChannel(ch interface{}) string {
 	mutex.Lock()
 	chPtrStr := fmt.Sprintf("%v", ch)
@@ -152,23 +138,27 @@ func isName(value string) bool {
 	return false
 }
 
-//func ReceiveFromChannel(value interface{}, channel chan int) {
+func SendToChannel(value interface{}, channel interface{}) {
+	if !isChannel(channel) {
+		return
+	}
+	chanName := findChannel(channel)
+	if chanName == "" {
+		chanName = createChannel(channel)
+	}
+
+	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineSend")
+}
+
 func ReceiveFromChannel(value interface{}, channel interface{}) interface{} {
 	if !isChannel(channel) {
 		return nil
 	}
-
-	//fmt.Println("Prijate z: ", channel)
-	//for i := range channels {
-	//	fmt.Print(channels[i].Ch, ",")
-	//}
-	//fmt.Println("\n-------------------------------")
 	chanName := findChannel(channel)
 
 	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineReceive")
 
 	return value
-
 }
 
 func randomString() string {
@@ -217,8 +207,9 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 
 	for _, event := range events {
-		//fmt.Printf("%+v\n", event)
+		fmt.Printf("%+v\n", event)
 		gId := int64(event.GorutineId)
+		_, ok := goroutines[gId]
 		if event.Name == "UserLog" {
 			//fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
@@ -267,7 +258,7 @@ func toJson(events []*Event) {
 			sleeps[gId] = event.Timestmp
 
 		} else if event.Name == "GoStart" {
-			if sleeps[gId] > 0 {
+			if sleeps[gId] > 0 && ok {
 				cmd := Command{
 					Time:     sleeps[gId],
 					Command:  "GoroutineSleep",
@@ -277,6 +268,24 @@ func toJson(events []*Event) {
 				commands = append(commands, &cmd)
 				sleeps[gId] = 0
 
+			}
+		} else if event.Name == "GoBlockRecv" || event.Name == "GoBlockSend" {
+			if ok {
+				blocks[gId] = event.Timestmp
+			}
+
+		} else if event.Name == "GoUnblock" {
+			_, ok2 := blocks[gId]
+			if ok && ok2 {
+
+				cmd := Command{
+					Time:     blocks[gId],
+					Command:  "GoroutineBlock",
+					Id:       gId,
+					Duration: event.Timestmp - blocks[gId],
+				}
+				commands = append(commands, &cmd)
+				blocks[gId] = 0
 			}
 		}
 	}

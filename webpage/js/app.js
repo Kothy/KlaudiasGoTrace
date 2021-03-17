@@ -7,6 +7,7 @@ var namesObjs = [];
 var goroutinesObjs = [];
 var sleepsObjs = [];
 var parentsObjs = [];
+var blockObjs = [];
 var objects = [];
 var scene;
 var renderer;
@@ -24,6 +25,7 @@ let ARROW_COLOR = "#DC143C"
 let GNAME_COLOR = "#800080"
 let GBODY_COLOR = "#0040ff";
 let GSLEEP_COLOR = "#ffff00";
+let GBLOCK_COLOR = "#fc9f1c";
 let PARENT_COLOR = "#55db30";
 let BG_COLOR = "#282c34";
 let ONE_FRAME = 0.0000001;
@@ -34,16 +36,19 @@ let MAXLEN = 10;
 let arrowsCheck = true;
 let namesCheck = true;
 let sleepsCheck = false;
+let blocksCheck = false;
 let PARAMS = {
 		Arrows: true,
 		Names: true,
 		Sleeps: false,
+		Blocks: false,
 		Background: BG_COLOR,
 		GoroutinesCol: GBODY_COLOR,
 		ArrowsCol: ARROW_COLOR,
 		ParentsCol: PARENT_COLOR,
 		NamesCol: GNAME_COLOR,
-		SleepsCol:GSLEEP_COLOR,
+		SleepsCol: GSLEEP_COLOR,
+		BlocksCol: GBLOCK_COLOR,
 };
 
 
@@ -61,6 +66,7 @@ class Goroutine {
 		this.depth = 0;
 		this.received = [];
 		this.sleeps = [];
+		this.blocks = [];
 	}
 	setDepth(d) {
 		this.depth = d;
@@ -96,6 +102,10 @@ class Goroutine {
 
 	addSleep(item){
 		this.sleeps.push(item);
+	}
+
+	addBlock(item){
+		this.blocks.push(item);
 	}
 }
 
@@ -160,6 +170,11 @@ function createSettings(){
 			checkboxSleeps(ev.value);
 	});
 
+	const input10 = pane.addInput(PARAMS, 'Blocks');
+	input10.on('change', function(ev) {
+			checkboxBlocks(ev.value);
+	});
+
 	const input3 = pane.addInput(PARAMS, 'Background');
 	input3.on('change', function(ev) {
 			scene.background = new THREE.Color(ev.value);
@@ -214,6 +229,14 @@ function createSettings(){
 		}
 		GSLEEP_COLOR = ev.value;
 	});
+
+	const input11 = pane.addInput(PARAMS, 'BlocksCol');
+	input11.on('change', function(ev) {
+		for (var i = 0; i < blockObjs.length; i++) {
+				blockObjs[i].material.color.set(ev.value);
+		}
+		GBLOCK_COLOR = ev.value;
+	});
 }
 
 function checkboxCommunication(value){
@@ -235,6 +258,13 @@ function checkboxSleeps(value){
 					sleepsObjs[i].visible = value;
 		}
 		sleepsCheck = value;
+}
+
+function checkboxBlocks(value){
+		for (var i = 0; i < blockObjs.length; i++) {
+					blockObjs[i].visible = value;
+		}
+		blocksCheck = value;
 }
 
 mainApp();
@@ -272,18 +302,6 @@ function openFile(event) {
 }
 
 function resetScene() {
-		// PARAMS = {
-		// 		Arrows: true,
-		// 		Names: true,
-		// 		Sleeps: false,
-		// 		Background: BG_COLOR,
-		// 		GoroutinesCol: GBODY_COLOR,
-		// 		ArrowsCol: ARROW_COLOR,
-		// 		ParentsCol: PARENT_COLOR,
-		// 		NamesCol: GNAME_COLOR,
-		// 		SleepsCol:GSLEEP_COLOR,
-		// };
-		// createSettings();
 		clearScene(scene);
 		setLight();
 }
@@ -320,7 +338,7 @@ function calculateYFromTimeWDiv(time) {
 
 function sleep(sleepDuration){
     var now = new Date().getTime();
-    while(new Date().getTime() < now + sleepDuration){ /* do nothing */ }
+    while(new Date().getTime() < now + sleepDuration){}
 }
 
 function loadJson() {
@@ -367,14 +385,25 @@ function loadJson() {
 						var g = getGoroutineById(obj.Id);
 						var startSleep = obj.Time;
 						var sleepDuration = obj.Duration;
-
-						if (sleepDuration > 10000000) {
-							startSleep += (10000000);
-						}
 						var endSleep = startSleep + sleepDuration;
+
+						startSleep += (sleepDuration/8);
+						endSleep -= (sleepDuration/8);
+
 						var startY = calculateYFromTime(startSleep);
 						var endY = calculateYFromTime(endSleep);
 						g.addSleep([startY, endY]);
+				} else if (obj.Command === "GoroutineBlock") {
+						var g = getGoroutineById(obj.Id);
+						var startBlock = obj.Time;
+						var blockDuration = obj.Duration;
+						var endBlock = startBlock + blockDuration;
+						startBlock += (blockDuration/8);
+						endBlock -= (blockDuration/8);
+
+						var startY = calculateYFromTime(startBlock);
+						var endY = calculateYFromTime(endBlock);
+						g.addBlock([startY, endY]);
 				}
 			}
 			var div = 0;
@@ -397,9 +426,16 @@ function loadJson() {
 					for (var j = 0; j < g.sleeps.length; j++) {
 					  g.sleeps[j][0] = g.sleeps[j][0] / div;
 						g.sleeps[j][1] = g.sleeps[j][1] / div;
-
 						if (g.sleeps[j][1] < g.vecEnd.y) g.sleeps[j][1] = g.vecEnd.y;
 					}
+
+					for (j = 0; j < g.blocks.length; j++) {
+					  g.blocks[j][0] = g.blocks[j][0] / div;
+						g.blocks[j][1] = g.blocks[j][1] / div;
+						if (g.blocks[j][1] < g.vecEnd.y) g.blocks[j][1] = g.vecEnd.y;
+					}
+
+					console.log(g.blocks);
 
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)
@@ -407,9 +443,6 @@ function loadJson() {
 					var children = findChildren(g);
 					g.setChildren(children);
 		}
-		// setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
-		// setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
-		// setTimeout(function(){drawCommunication();}, 100);
 
 		setDepths(getGoroutineById(1), 0);
 		drawAllGoroutines(getGoroutineById(1));
@@ -418,13 +451,9 @@ function loadJson() {
 		checkboxSleeps(sleepsCheck);
 		checkboxNames(namesCheck);
 		checkboxCommunication(arrowsCheck);
-
-		// var mainGoroutine = goroutines[0];
-		// var start = mainGoroutine.vecStart;
-		// var end = mainGoroutine.vecEnd;
+		checkboxBlocks(blocksCheck);
 
 		camera.position.set(0, -max_len, 25);
-
 
 		camera.lookAt(0, -(max_len), 0);
 		setControls();
@@ -504,7 +533,6 @@ function drawArrowWithText(origin, tip, color, textt) {
 }
 
 function drawAllGoroutines(g) {
-		// clearScene();
 		var vecStart = g.vecStart;
 		var vecEnd = g.setVecEnd;
 		var x = vecStart.x;
@@ -524,6 +552,12 @@ function drawAllGoroutines(g) {
 			sleepsObjs.push(sleep);
 		});
 
+		g.blocks.forEach((item, i) => {
+			var start = new THREE.Vector3(g.vecStart.x, item[0], g.vecStart.z);
+			var end = new THREE.Vector3(g.vecEnd.x, item[1], g.vecEnd.z);
+			var block = drawLineWithThickness(start, end, THICKNESS3, GBLOCK_COLOR);
+			blockObjs.push(block);
+		});
 
 		namesObjs.push(nameObj);
 
@@ -736,17 +770,6 @@ function drawScene(){
 
 	};
 	GameLoop();
-}
-
-function checkLoading() {
-	if (RESOURCES_LOADED == false){
-		requestAnimationFrame(drawScene);
-		loadingScreen.box.rotation.x += 0.01;
-
-		renderer.render(loadingScreen.scene, loadingScreen.camera);
-		return true;
-	}
-	return false;
 }
 
 function setScene(){
