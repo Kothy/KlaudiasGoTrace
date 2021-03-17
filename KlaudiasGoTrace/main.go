@@ -20,6 +20,7 @@ import (
 var traceFileName string
 var commands []*Command
 var channels []*Chan
+var sleeps = make(map[int64]int64)
 var mutex = &sync.Mutex{}
 var traceBuffer bytes.Buffer
 
@@ -33,12 +34,12 @@ type Command struct {
 	Command  string      `json:"Command"`
 	Id       int64       `json:"Id"`
 	ParentId int64       `json:"ParentId"`
-	From     string      `json:"From"`
-	To       string      `json:"To"`
 	Channel  string      `json:"Channel"`
 	Value    interface{} `json:"Value"`
-	EventID  string      `json:"EventID"`
 	Duration int64       `json:"Duration"`
+	//From     string      `json:"From"`
+	//To       string      `json:"To"`
+	//EventID  string      `json:"EventID"`
 }
 
 func StartTrace() {
@@ -110,7 +111,7 @@ func SendToChannel(value interface{}, channel interface{}) {
 		chanName = createChannel(channel)
 	}
 
-	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineSend")
+	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineSend")
 }
 
 //func findChannel(ch chan int) string {
@@ -164,7 +165,7 @@ func ReceiveFromChannel(value interface{}, channel interface{}) interface{} {
 	//fmt.Println("\n-------------------------------")
 	chanName := findChannel(channel)
 
-	Log(fmt.Sprintf("%v", value)+"_"+chanName, "GoroutineReceive")
+	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineReceive")
 
 	return value
 
@@ -215,31 +216,28 @@ func toJson(events []*Event) {
 	gParents := make(map[int64]int64)
 	var mainEndCmd Command
 
-	//for _, chann := range channels {
-	//	fmt.Println("Kanal: ", chann.Name)
-	//}
-
-	//fmt.Println("Pole eventov je dlzky: ", len(events))
 	for _, event := range events {
 		//fmt.Printf("%+v\n", event)
+		gId := int64(event.GorutineId)
 		if event.Name == "UserLog" {
 			//fmt.Printf("%+v\n", event)
 			parentId, _ := strconv.Atoi(event.strArgs[0])
-			comm := event.strArgs[1]
-			if strings.Contains(comm, "GoroutineStart") || strings.Contains(comm, "GoroutineEnd") {
+			command := event.strArgs[1]
+			if strings.Contains(command, "GoroutineStart") || strings.Contains(command, "GoroutineEnd") {
 				parentId64 := int64(parentId)
 				cmd := Command{
 					Time:     event.Timestmp,
 					Command:  event.strArgs[1],
-					Id:       int64(event.GorutineId),
+					Id:       gId,
 					ParentId: parentId64,
 				}
 				commands = append(commands, &cmd)
 				if event.strArgs[1] == "GoroutineStart" {
-					goroutines[int64(event.GorutineId)] = false
-					gParents[int64(event.GorutineId)] = int64(event.ParentId)
+					goroutines[gId] = false
+					gParents[gId] = int64(event.ParentId)
+					sleeps[gId] = 0
 				} else if event.strArgs[1] == "GoroutineEnd" {
-					goroutines[int64(event.GorutineId)] = true
+					goroutines[gId] = true
 
 					if event.GorutineId == uint64(1) {
 						lastCmd := len(commands) - 1
@@ -247,24 +245,39 @@ func toJson(events []*Event) {
 						mainEndCmd = cmd
 					}
 				}
-			} else if strings.Contains(comm, "GoroutineSend") || strings.Contains(comm, "GoroutineReceive") {
-				args := strings.Split(event.strArgs[0], "_")
-				value := args[0]
+			} else if strings.Contains(command, "GoroutineSend") || strings.Contains(command, "GoroutineReceive") {
+
+				channel := event.strArgs[0][:10]
+				value := event.strArgs[0][11:]
 
 				if value == "<nil>" {
 					value = "nil"
 				}
-				channel := args[1]
+
 				cmd := Command{
 					Time:    event.Timestmp,
 					Command: event.strArgs[1],
-					Id:      int64(event.GorutineId),
+					Id:      gId,
 					Channel: channel,
 					Value:   value,
 				}
 				commands = append(commands, &cmd)
 			}
+		} else if event.Name == "GoSleep" {
+			sleeps[gId] = event.Timestmp
 
+		} else if event.Name == "GoStart" {
+			if sleeps[gId] > 0 {
+				cmd := Command{
+					Time:     sleeps[gId],
+					Command:  "GoroutineSleep",
+					Id:       gId,
+					Duration: event.Timestmp - sleeps[gId],
+				}
+				commands = append(commands, &cmd)
+				sleeps[gId] = 0
+
+			}
 		}
 	}
 

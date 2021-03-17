@@ -5,6 +5,7 @@ var jsonArray = [];
 var commObjs = [];
 var namesObjs = [];
 var goroutinesObjs = [];
+var sleepsObjs = [];
 var parentsObjs = [];
 var objects = [];
 var scene;
@@ -22,12 +23,28 @@ let WINDOW_CUT = 21;
 let ARROW_COLOR = "#DC143C"
 let GNAME_COLOR = "#800080"
 let GBODY_COLOR = "#0040ff";
+let GSLEEP_COLOR = "#ffff00";
 let PARENT_COLOR = "#55db30";
 let BG_COLOR = "#282c34";
 let ONE_FRAME = 0.0000001;
 let THICKNESS = 0.02;
 let THICKNESS2 = 0.007;
+let THICKNESS3 = THICKNESS + 0.005;
 let MAXLEN = 10;
+let arrowsCheck = true;
+let namesCheck = true;
+let sleepsCheck = false;
+let PARAMS = {
+		Arrows: true,
+		Names: true,
+		Sleeps: false,
+		Background: BG_COLOR,
+		GoroutinesCol: GBODY_COLOR,
+		ArrowsCol: ARROW_COLOR,
+		ParentsCol: PARENT_COLOR,
+		NamesCol: GNAME_COLOR,
+		SleepsCol:GSLEEP_COLOR,
+};
 
 
 class Goroutine {
@@ -43,6 +60,7 @@ class Goroutine {
 		this.children = [];
 		this.depth = 0;
 		this.received = [];
+		this.sleeps = [];
 	}
 	setDepth(d) {
 		this.depth = d;
@@ -74,6 +92,10 @@ class Goroutine {
 
 	addReceived(item){
 		this.received.push(item);
+	}
+
+	addSleep(item){
+		this.sleeps.push(item);
 	}
 }
 
@@ -120,28 +142,22 @@ function mainApp(){
 }
 
 function createSettings(){
-	const PARAMS = {
-			Arrows: true,
-			Names: true,
-			Background: BG_COLOR,
-			GoroutinesCol: GBODY_COLOR,
-			ArrowsCol: ARROW_COLOR,
-			ParentsCol: PARENT_COLOR,
-			NamesCol: GNAME_COLOR,
-	};
 
 	const pane = new Tweakpane({title: "Settings"});
 	const input = pane.addInput(PARAMS, 'Arrows');
 
 	input.on('change', function(ev) {
-			// console.log(`change: ${ev.value}`);
-			checkboxCommunication(null);
+			checkboxCommunication(ev.value);
 	});
 
 	const input2 = pane.addInput(PARAMS, 'Names');
 	input2.on('change', function(ev) {
-			// console.log(`change: ${ev.value}`);
-			checkboxNames(null);
+			checkboxNames(ev.value);
+	});
+
+	const input9 = pane.addInput(PARAMS, 'Sleeps');
+	input9.on('change', function(ev) {
+			checkboxSleeps(ev.value);
 	});
 
 	const input3 = pane.addInput(PARAMS, 'Background');
@@ -164,7 +180,6 @@ function createSettings(){
 			if (commObjs[i].type == "Mesh"){
 				commObjs[i].material.color.set(ev.value);
 			} else{
-				console.log(commObjs[i]);
 				if (commObjs[i].children[0])
 					commObjs[i].children[0].material.color.set(ev.value);
 
@@ -191,20 +206,35 @@ function createSettings(){
 		}
 		GNAME_COLOR = ev.value;
 	});
+
+	const input8 = pane.addInput(PARAMS, 'SleepsCol');
+	input8.on('change', function(ev) {
+		for (var i = 0; i < sleepsObjs.length; i++) {
+				sleepsObjs[i].material.color.set(ev.value);
+		}
+		GSLEEP_COLOR = ev.value;
+	});
 }
 
-function checkboxCommunication(event){
-		var check = document.getElementById("commCheckbox");
+function checkboxCommunication(value){
 		for (var i = 0; i < commObjs.length; i++) {
-					commObjs[i].visible = !commObjs[i].visible;
+					commObjs[i].visible = value;
 		}
+		arrowsCheck = value;
 }
 
-function checkboxNames(event){
-		var check = document.getElementById("commCheckbox");
+function checkboxNames(value){
 		for (var i = 0; i < namesObjs.length; i++) {
-					namesObjs[i].visible = !namesObjs[i].visible;
+					namesObjs[i].visible = value;
 		}
+		namesCheck = value;
+}
+
+function checkboxSleeps(value){
+		for (var i = 0; i < sleepsObjs.length; i++) {
+					sleepsObjs[i].visible = value;
+		}
+		sleepsCheck = value;
 }
 
 mainApp();
@@ -228,7 +258,9 @@ function openFile(event) {
 
 		var reader = new FileReader();
 		reader.onload = function() {
+
 			var text = reader.result;
+			if (text == "") return;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
 			Notiflix.Loading.Hourglass('Drawing...');
@@ -240,6 +272,18 @@ function openFile(event) {
 }
 
 function resetScene() {
+		// PARAMS = {
+		// 		Arrows: true,
+		// 		Names: true,
+		// 		Sleeps: false,
+		// 		Background: BG_COLOR,
+		// 		GoroutinesCol: GBODY_COLOR,
+		// 		ArrowsCol: ARROW_COLOR,
+		// 		ParentsCol: PARENT_COLOR,
+		// 		NamesCol: GNAME_COLOR,
+		// 		SleepsCol:GSLEEP_COLOR,
+		// };
+		// createSettings();
 		clearScene(scene);
 		setLight();
 }
@@ -319,6 +363,18 @@ function loadJson() {
 						var value = obj.Value;
 						var message = chan.pop();
 						g2.addReceived([message[2], obj.Time, value, message[0]]);
+				} else if (obj.Command === "GoroutineSleep") {
+						var g = getGoroutineById(obj.Id);
+						var startSleep = obj.Time;
+						var sleepDuration = obj.Duration;
+
+						if (sleepDuration > 10000000) {
+							startSleep += (10000000);
+						}
+						var endSleep = startSleep + sleepDuration;
+						var startY = calculateYFromTime(startSleep);
+						var endY = calculateYFromTime(endSleep);
+						g.addSleep([startY, endY]);
 				}
 			}
 			var div = 0;
@@ -338,6 +394,13 @@ function loadJson() {
 					g.vecStart.y = g.vecStart.y / div;
 					g.len = g.vecEnd.y;
 					g.len = Math.abs(g.vecEnd.y - g.vecStart.y);
+					for (var j = 0; j < g.sleeps.length; j++) {
+					  g.sleeps[j][0] = g.sleeps[j][0] / div;
+						g.sleeps[j][1] = g.sleeps[j][1] / div;
+
+						if (g.sleeps[j][1] < g.vecEnd.y) g.sleeps[j][1] = g.vecEnd.y;
+					}
+
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)
 					}
@@ -352,9 +415,13 @@ function loadJson() {
 		drawAllGoroutines(getGoroutineById(1));
 		drawCommunication();
 
-		var mainGoroutine = goroutines[0];
-		var start = mainGoroutine.vecStart;
-		var end = mainGoroutine.vecEnd;
+		checkboxSleeps(sleepsCheck);
+		checkboxNames(namesCheck);
+		checkboxCommunication(arrowsCheck);
+
+		// var mainGoroutine = goroutines[0];
+		// var start = mainGoroutine.vecStart;
+		// var end = mainGoroutine.vecEnd;
 
 		camera.position.set(0, -max_len, 25);
 
@@ -450,6 +517,14 @@ function drawAllGoroutines(g) {
 		var nameObj = drawText(name, font, g.vecStart.x, g.vecStart.y + 0.35,
 					g.vecStart.z, 0.35, 0.003, GNAME_COLOR);
 
+		g.sleeps.forEach((item, i) => {
+			var start = new THREE.Vector3(g.vecStart.x, item[0], g.vecStart.z);
+			var end = new THREE.Vector3(g.vecEnd.x, item[1], g.vecEnd.z);
+			var sleep = drawLineWithThickness(start, end, THICKNESS3, GSLEEP_COLOR);
+			sleepsObjs.push(sleep);
+		});
+
+
 		namesObjs.push(nameObj);
 
 		var deg = 1 + Math.floor(Math.random() * 359);
@@ -475,9 +550,6 @@ function drawAllGoroutines(g) {
 				var yy2 = g.children[i].vecEnd.y;
 				var lVec = new THREE.Vector3(x ,yy, z);
 				var lVec2 = new THREE.Vector3(x ,yy2, z);
-
-				// drawSimpleLine(lVec, g.children[i].vecStart, "green");
-				// drawSimpleLine(lVec2, g.children[i].vecEnd, "green");
 
 				var line1 = drawLineWithThickness(lVec, g.children[i].vecStart, THICKNESS2, PARENT_COLOR);
 				var line2 = drawLineWithThickness(lVec2, g.children[i].vecEnd, THICKNESS2, PARENT_COLOR);
