@@ -427,15 +427,16 @@ function loadJson() {
 					  g.sleeps[j][0] = g.sleeps[j][0] / div;
 						g.sleeps[j][1] = g.sleeps[j][1] / div;
 						if (g.sleeps[j][1] < g.vecEnd.y) g.sleeps[j][1] = g.vecEnd.y;
+						if (g.sleeps[j][0] > g.vecStart.y) g.sleeps[j][0] = g.vecStart.y;
 					}
 
+					var del = [];
 					for (j = 0; j < g.blocks.length; j++) {
 					  g.blocks[j][0] = g.blocks[j][0] / div;
 						g.blocks[j][1] = g.blocks[j][1] / div;
 						if (g.blocks[j][1] < g.vecEnd.y) g.blocks[j][1] = g.vecEnd.y;
+						if (g.blocks[j][0] > g.vecStart.y) g.blocks[j][0] = g.vecStart.y;
 					}
-
-					console.log(g.blocks);
 
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)

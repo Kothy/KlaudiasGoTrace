@@ -1,6 +1,6 @@
 [
     {
-        "Time": 44175,
+        "Time": 494229,
         "Command": "GoroutineStart",
         "Id": 1,
         "ParentId": 0,
@@ -9,79 +9,79 @@
         "Duration": 0
     },
     {
-        "Time": 57912,
+        "Time": 510975,
         "Command": "GoroutineSleep",
         "Id": 1,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20504235
+        "Duration": 19359676
     },
     {
-        "Time": 20702672,
+        "Time": 19871869,
+        "Command": "GoroutineSleep",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 11171317
+    },
+    {
+        "Time": 31107691,
         "Command": "GoroutineStart",
-        "Id": 18,
+        "Id": 7,
         "ParentId": 1,
         "Channel": "",
         "Value": null,
         "Duration": 0
     },
     {
-        "Time": 20711120,
+        "Time": 31110852,
         "Command": "GoroutineSleep",
-        "Id": 18,
+        "Id": 7,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20951198
+        "Duration": 20756331
     },
     {
-        "Time": 41663349,
+        "Time": 51868251,
         "Command": "GoroutineSleep",
-        "Id": 18,
+        "Id": 7,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 10402929
+        "Duration": 11007855
     },
     {
-        "Time": 52332946,
+        "Time": 68570804,
         "Command": "GoroutineSend",
-        "Id": 18,
+        "Id": 7,
         "ParentId": 0,
-        "Channel": "ZQwLgeE1Vo",
+        "Channel": "KoFes3ER1Q",
         "Value": "42",
         "Duration": 0
     },
     {
-        "Time": 52353647,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "ZQwLgeE1Vo",
-        "Value": "42",
-        "Duration": 0
-    },
-    {
-        "Time": 52357581,
+        "Time": 31103376,
         "Command": "GoroutineSleep",
         "Id": 1,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20595834
+        "Duration": 100123450
     },
     {
-        "Time": 52347607,
+        "Time": 131228513,
         "Command": "GoroutineSleep",
-        "Id": 18,
+        "Id": 1,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20607012
+        "Duration": 20729825
     },
     {
-        "Time": 72955994,
+        "Time": 151960858,
         "Command": "GoroutineEnd",
         "Id": 1,
         "ParentId": 0,
@@ -90,9 +90,9 @@
         "Duration": 0
     },
     {
-        "Time": 72957177,
+        "Time": 151960858,
         "Command": "GoroutineEnd",
-        "Id": 18,
+        "Id": 7,
         "ParentId": 0,
         "Channel": "",
         "Value": null,

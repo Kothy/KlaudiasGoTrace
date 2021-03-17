@@ -1,6 +1,6 @@
 [
     {
-        "Time": 49337,
+        "Time": 48152,
         "Command": "GoroutineStart",
         "Id": 1,
         "ParentId": 0,
@@ -9,25 +9,16 @@
         "Duration": 0
     },
     {
-        "Time": 63860,
+        "Time": 68832,
         "Command": "GoroutineSleep",
         "Id": 1,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20098180
+        "Duration": 19461462
     },
     {
-        "Time": 20287091,
-        "Command": "GoroutineStart",
-        "Id": 20,
-        "ParentId": 1,
-        "Channel": "",
-        "Value": null,
-        "Duration": 0
-    },
-    {
-        "Time": 20287689,
+        "Time": 19614636,
         "Command": "GoroutineStart",
         "Id": 18,
         "ParentId": 1,
@@ -36,7 +27,7 @@
         "Duration": 0
     },
     {
-        "Time": 20302533,
+        "Time": 19622348,
         "Command": "GoroutineStart",
         "Id": 19,
         "ParentId": 1,
@@ -45,709 +36,898 @@
         "Duration": 0
     },
     {
-        "Time": 20304434,
+        "Time": 19651658,
+        "Command": "GoroutineStart",
+        "Id": 20,
+        "ParentId": 1,
+        "Channel": "",
+        "Value": null,
+        "Duration": 0
+    },
+    {
+        "Time": 19649671,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 20908094
+    },
+    {
+        "Time": 19655867,
+        "Command": "GoroutineSleep",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 20911789
+    },
+    {
+        "Time": 19631662,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 19908263
+        "Duration": 20960369
     },
     {
-        "Time": 20313554,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 19936968
-    },
-    {
-        "Time": 20293798,
-        "Command": "GoroutineSleep",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 19965609
-    },
-    {
-        "Time": 40368590,
+        "Time": 40726705,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "0",
         "Duration": 0
     },
     {
-        "Time": 40376984,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "0",
-        "Duration": 0
-    },
-    {
-        "Time": 41234426,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "0",
-        "Duration": 0
-    },
-    {
-        "Time": 41243417,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "0",
-        "Duration": 0
-    },
-    {
-        "Time": 41253007,
+        "Time": 40738647,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "0",
         "Duration": 0
     },
     {
-        "Time": 41262020,
+        "Time": 40739908,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "0",
         "Duration": 0
     },
     {
-        "Time": 41264626,
+        "Time": 41561024,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "0",
         "Duration": 0
     },
     {
-        "Time": 41272144,
+        "Time": 19640015,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 21923039
+    },
+    {
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 41567583
+    },
+    {
+        "Time": 41570509,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "0",
+        "Duration": 0
+    },
+    {
+        "Time": 41572518,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "0",
+        "Duration": 0
+    },
+    {
+        "Time": 41580657,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "0",
         "Duration": 0
     },
     {
-        "Time": 40373758,
+        "Time": 40608951,
+        "Command": "GoroutineBlock",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 975338
+    },
+    {
+        "Time": 41590420,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "0",
+        "Duration": 0
+    },
+    {
+        "Time": 40732067,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 9901228
+        "Duration": 9842140
     },
     {
-        "Time": 50439956,
+        "Time": 50582753,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "1",
         "Duration": 0
     },
     {
-        "Time": 50464988,
+        "Time": 50593883,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "1",
         "Duration": 0
     },
     {
-        "Time": 50474150,
+        "Time": 50599993,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "1",
         "Duration": 0
     },
     {
-        "Time": 50487734,
+        "Time": 41594201,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 9007629
+    },
+    {
+        "Time": 50606466,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "1",
         "Duration": 0
     },
     {
-        "Time": 50448969,
+        "Time": 50590956,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 10017031
+        "Duration": 11085351
     },
     {
-        "Time": 60475291,
+        "Time": 61689766,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "2",
         "Duration": 0
     },
     {
-        "Time": 60487529,
+        "Time": 61706921,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "2",
         "Duration": 0
     },
     {
-        "Time": 60490605,
+        "Time": 61712219,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "2",
         "Duration": 0
     },
     {
-        "Time": 60496243,
+        "Time": 50603710,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 11111414
+    },
+    {
+        "Time": 61724310,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "2",
         "Duration": 0
     },
     {
-        "Time": 41259350,
+        "Time": 41575380,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25332493
+        "Duration": 25017714
     },
     {
-        "Time": 66596606,
+        "Time": 66599375,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "1",
         "Duration": 0
     },
     {
-        "Time": 66608374,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "1",
-        "Duration": 0
-    },
-    {
-        "Time": 66611108,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "1",
-        "Duration": 0
-    },
-    {
-        "Time": 66617708,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "1",
-        "Duration": 0
-    },
-    {
-        "Time": 60484304,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 11072463
-    },
-    {
-        "Time": 71560761,
-        "Command": "GoroutineSend",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 71582461,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 71585344,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 71590619,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 71565630,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 10109854
-    },
-    {
-        "Time": 81688576,
-        "Command": "GoroutineSend",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "4",
-        "Duration": 0
-    },
-    {
-        "Time": 81703442,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "4",
-        "Duration": 0
-    },
-    {
-        "Time": 81706581,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "4",
-        "Duration": 0
-    },
-    {
-        "Time": 81712561,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "4",
-        "Duration": 0
-    },
-    {
-        "Time": 81699960,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 11005868
-    },
-    {
-        "Time": 66605747,
-        "Command": "GoroutineSleep",
+        "Time": 40741595,
+        "Command": "GoroutineBlock",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 26104268
+        "Duration": 25862352
     },
     {
-        "Time": 92715375,
+        "Time": 66609416,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "1",
+        "Duration": 0
+    },
+    {
+        "Time": 66612535,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "1",
+        "Duration": 0
+    },
+    {
+        "Time": 61720187,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 4894398
+    },
+    {
+        "Time": 66619819,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "1",
+        "Duration": 0
+    },
+    {
+        "Time": 61702969,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10084100
+    },
+    {
+        "Time": 71827296,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
+        "Value": "3",
+        "Duration": 0
+    },
+    {
+        "Time": 71847591,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "3",
+        "Duration": 0
+    },
+    {
+        "Time": 71851030,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "3",
+        "Duration": 0
+    },
+    {
+        "Time": 66623302,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 5229458
+    },
+    {
+        "Time": 71857610,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "3",
+        "Duration": 0
+    },
+    {
+        "Time": 71839238,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10790880
+    },
+    {
+        "Time": 82659215,
+        "Command": "GoroutineSend",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 82674447,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 82677737,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 71854640,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10824934
+    },
+    {
+        "Time": 82686474,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 66606510,
+        "Command": "GoroutineSleep",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 26038107
+    },
+    {
+        "Time": 92654892,
+        "Command": "GoroutineSend",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "2",
+        "Duration": 0
+    },
+    {
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 92660682
+    },
+    {
+        "Time": 92708685,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "2",
+        "Duration": 0
+    },
+    {
+        "Time": 92713513,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "2",
+        "Duration": 0
+    },
+    {
+        "Time": 82683569,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10031995
+    },
+    {
+        "Time": 92720862,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "2",
+        "Duration": 0
+    },
+    {
+        "Time": 82670452,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10987721
+    },
+    {
+        "Time": 93662788,
+        "Command": "GoroutineSend",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 92717234,
-        "Command": "GoroutineSend",
-        "Id": 19,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "2",
-        "Duration": 0
-    },
-    {
-        "Time": 92727550,
+        "Time": 93673533,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 92730924,
+        "Time": 93676332,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 92747562,
+        "Time": 92717935,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 959828
+    },
+    {
+        "Time": 93684535,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 92776716,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "2",
-        "Duration": 0
-    },
-    {
-        "Time": 92779535,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "2",
-        "Duration": 0
-    },
-    {
-        "Time": 92785964,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "2",
-        "Duration": 0
-    },
-    {
-        "Time": 92724175,
+        "Time": 93670820,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 10093365
+        "Duration": 12014202
     },
     {
-        "Time": 102825122,
+        "Time": 105702263,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 102835545,
+        "Time": 105717046,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 102838599,
+        "Time": 105721169,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 102844216,
+        "Time": 93681950,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 12041740
+    },
+    {
+        "Time": 105729971,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 102832576,
+        "Time": 105713243,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 10327621
+        "Duration": 10995775
     },
     {
-        "Time": 113189372,
+        "Time": 116763751,
         "Command": "GoroutineSend",
         "Id": 18,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 113204515,
+        "Time": 116776398,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 113208978,
+        "Time": 116779944,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 113227005,
+        "Time": 105726104,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 11056147
+    },
+    {
+        "Time": 116790775,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 92788570,
+        "Time": 92665937,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25404320
+        "Duration": 26028237
     },
     {
-        "Time": 118209506,
+        "Time": 118702612,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "3",
         "Duration": 0
     },
     {
-        "Time": 118219758,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 118222406,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 118227618,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "3",
-        "Duration": 0
-    },
-    {
-        "Time": 113201076,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 10962661
-    },
-    {
-        "Time": 124173326,
-        "Command": "GoroutineSend",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 124191652,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 124195090,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 124201498,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 124185159,
-        "Command": "GoroutineSleep",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "",
-        "Value": null,
-        "Duration": 10165619
-    },
-    {
-        "Time": 134361500,
-        "Command": "GoroutineSend",
-        "Id": 18,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "9",
-        "Duration": 0
-    },
-    {
-        "Time": 134382004,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "9",
-        "Duration": 0
-    },
-    {
-        "Time": 134387130,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "9",
-        "Duration": 0
-    },
-    {
-        "Time": 134397638,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "9",
-        "Duration": 0
-    },
-    {
-        "Time": 118217195,
-        "Command": "GoroutineSleep",
+        "Time": 0,
+        "Command": "GoroutineBlock",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25142641
+        "Duration": 118707868
     },
     {
-        "Time": 143369724,
-        "Command": "GoroutineSend",
-        "Id": 19,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "4",
-        "Duration": 0
-    },
-    {
-        "Time": 143382454,
+        "Time": 118715836,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "4",
+        "Channel": "0wZDfusgzb",
+        "Value": "3",
         "Duration": 0
     },
     {
-        "Time": 143385679,
+        "Time": 118718934,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "4",
+        "Channel": "p0zLVp7mLc",
+        "Value": "3",
         "Duration": 0
     },
     {
-        "Time": 143391787,
+        "Time": 116787058,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 1933521
+    },
+    {
+        "Time": 118727415,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
+        "Value": "3",
+        "Duration": 0
+    },
+    {
+        "Time": 116772424,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 10920513
+    },
+    {
+        "Time": 127706374,
+        "Command": "GoroutineSend",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "8",
+        "Duration": 0
+    },
+    {
+        "Time": 127721115,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "8",
+        "Duration": 0
+    },
+    {
+        "Time": 127724384,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "8",
+        "Duration": 0
+    },
+    {
+        "Time": 118724745,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 9001433
+    },
+    {
+        "Time": 127730451,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "8",
+        "Duration": 0
+    },
+    {
+        "Time": 127717569,
+        "Command": "GoroutineSleep",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 11591061
+    },
+    {
+        "Time": 139320486,
+        "Command": "GoroutineSend",
+        "Id": 18,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 139333112,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 139336765,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 127727994,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 11610737
+    },
+    {
+        "Time": 139343901,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 118712610,
+        "Command": "GoroutineSleep",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 25994932
+    },
+    {
+        "Time": 144717711,
+        "Command": "GoroutineSend",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
         "Value": "4",
         "Duration": 0
     },
     {
-        "Time": 134371731,
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 144733092
+    },
+    {
+        "Time": 144742257,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 144745995,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 139340974,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 5407158
+    },
+    {
+        "Time": 144753494,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "4",
+        "Duration": 0
+    },
+    {
+        "Time": 139329587,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 10948286
+        "Duration": 10421746
     },
     {
-        "Time": 145320743,
+        "Time": 149752529,
         "Command": "GoroutineSleep",
         "Id": 18,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20211314
+        "Duration": 19994432
     },
     {
-        "Time": 165534961,
+        "Time": 169749567,
         "Command": "GoroutineEnd",
         "Id": 18,
         "ParentId": 0,
@@ -756,250 +936,340 @@
         "Duration": 0
     },
     {
-        "Time": 143379250,
+        "Time": 144736916,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25097468
+        "Duration": 26984006
     },
     {
-        "Time": 168484728,
+        "Time": 171937246,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 168494958,
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 171945449
+    },
+    {
+        "Time": 171954998,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 168498162,
+        "Time": 171958609,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 168504249,
+        "Time": 144750396,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 27210264
+    },
+    {
+        "Time": 171965872,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "5",
         "Duration": 0
     },
     {
-        "Time": 168491712,
+        "Time": 171949829,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25571297
+        "Duration": 25842269
     },
     {
-        "Time": 194073197,
+        "Time": 197805728,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 194089023,
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 197813269
+    },
+    {
+        "Time": 197819999,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 194092377,
+        "Time": 197823801,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 194099510,
+        "Time": 171962817,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 25863377
+    },
+    {
+        "Time": 197833842,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "6",
         "Duration": 0
     },
     {
-        "Time": 194085563,
+        "Time": 197816666,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25378050
+        "Duration": 25004426
     },
     {
-        "Time": 219474270,
+        "Time": 222832756,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 219488709,
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 222839293
+    },
+    {
+        "Time": 222845532,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 219492980,
+        "Time": 222848501,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 219504385,
+        "Time": 197830168,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 25019978
+    },
+    {
+        "Time": 222854953,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
         "Value": "7",
         "Duration": 0
     },
     {
-        "Time": 219484800,
+        "Time": 222842348,
         "Command": "GoroutineSleep",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25106866
+        "Duration": 26011595
     },
     {
-        "Time": 244601683,
+        "Time": 248875242,
         "Command": "GoroutineSend",
         "Id": 19,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
+        "Channel": "0wZDfusgzb",
         "Value": "8",
         "Duration": 0
     },
     {
-        "Time": 244616292,
-        "Command": "GoroutineReceive",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 244620243,
-        "Command": "GoroutineSend",
-        "Id": 1,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 244630281,
-        "Command": "GoroutineReceive",
-        "Id": 20,
-        "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "8",
-        "Duration": 0
-    },
-    {
-        "Time": 244612212,
-        "Command": "GoroutineSleep",
+        "Time": 0,
+        "Command": "GoroutineBlock",
         "Id": 19,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 25349729
+        "Duration": 248881138
     },
     {
-        "Time": 269980053,
-        "Command": "GoroutineSend",
-        "Id": 19,
-        "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "9",
-        "Duration": 0
-    },
-    {
-        "Time": 270015187,
+        "Time": 248889855,
         "Command": "GoroutineReceive",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "Nz80j6PRM1",
-        "Value": "9",
+        "Channel": "0wZDfusgzb",
+        "Value": "8",
         "Duration": 0
     },
     {
-        "Time": 270021509,
+        "Time": 248893038,
         "Command": "GoroutineSend",
         "Id": 1,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
-        "Value": "9",
+        "Channel": "p0zLVp7mLc",
+        "Value": "8",
         "Duration": 0
     },
     {
-        "Time": 270033085,
+        "Time": 222852111,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 26042743
+    },
+    {
+        "Time": 248901562,
         "Command": "GoroutineReceive",
         "Id": 20,
         "ParentId": 0,
-        "Channel": "akWGrckSNd",
+        "Channel": "p0zLVp7mLc",
+        "Value": "8",
+        "Duration": 0
+    },
+    {
+        "Time": 248886543,
+        "Command": "GoroutineSleep",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 24997889
+    },
+    {
+        "Time": 273894815,
+        "Command": "GoroutineSend",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
         "Value": "9",
         "Duration": 0
     },
     {
-        "Time": 270035263,
+        "Time": 0,
+        "Command": "GoroutineBlock",
+        "Id": 19,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 273900754
+    },
+    {
+        "Time": 273909000,
+        "Command": "GoroutineReceive",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "0wZDfusgzb",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 273912098,
+        "Command": "GoroutineSend",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 248898720,
+        "Command": "GoroutineBlock",
+        "Id": 1,
+        "ParentId": 0,
+        "Channel": "",
+        "Value": null,
+        "Duration": 25014958
+    },
+    {
+        "Time": 273920365,
+        "Command": "GoroutineReceive",
+        "Id": 20,
+        "ParentId": 0,
+        "Channel": "p0zLVp7mLc",
+        "Value": "9",
+        "Duration": 0
+    },
+    {
+        "Time": 273921690,
         "Command": "GoroutineSleep",
         "Id": 20,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20202813
+        "Duration": 20998716
     },
     {
-        "Time": 270027852,
+        "Time": 273917417,
         "Command": "GoroutineSleep",
         "Id": 1,
         "ParentId": 0,
         "Channel": "",
         "Value": null,
-        "Duration": 20212360
+        "Duration": 21003096
     },
     {
-        "Time": 290241023,
+        "Time": 294922670,
         "Command": "GoroutineEnd",
         "Id": 20,
         "ParentId": 0,
@@ -1008,7 +1278,7 @@
         "Duration": 0
     },
     {
-        "Time": 290242091,
+        "Time": 294923995,
         "Command": "GoroutineEnd",
         "Id": 1,
         "ParentId": 0,
@@ -1017,7 +1287,7 @@
         "Duration": 0
     },
     {
-        "Time": 290242091,
+        "Time": 294923995,
         "Command": "GoroutineEnd",
         "Id": 19,
         "ParentId": 0,
