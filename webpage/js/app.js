@@ -566,6 +566,7 @@ function drawAllGoroutines(g) {
 		namesObjs.push(nameObj);
 
 		var deg = 1 + Math.floor(Math.random() * 359);
+		g.children.sort(function (item1, item2) { return item1.id - item2.id });
 		for (var i = 0; i < g.children.length; i++) {
 				childrenNum = g.children.length
 				if (childrenNum == 2) {
