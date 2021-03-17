@@ -288,9 +288,7 @@ function openFile(event) {
 
 		var reader = new FileReader();
 		reader.onload = function() {
-
 			var text = reader.result;
-			if (text == "") return;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
 			Notiflix.Loading.Hourglass('Drawing...');
@@ -298,7 +296,12 @@ function openFile(event) {
 			setTimeout(loadJson, 100);
 		};
 
-		reader.readAsText(input.files[0]);
+		if (event != undefined) {
+			var file = event.target.files[0];
+			if(file != null && file.size > 0) {
+				reader.readAsText(input.files[0]);
+			}
+	 	}
 }
 
 function resetScene() {
