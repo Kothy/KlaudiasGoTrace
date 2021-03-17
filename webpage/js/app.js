@@ -147,7 +147,7 @@ function createSettings(){
 	const input3 = pane.addInput(PARAMS, 'Background');
 	input3.on('change', function(ev) {
 			scene.background = new THREE.Color(ev.value);
-			BG_COLOR = ec.value;
+			BG_COLOR = ev.value;
 	});
 
 	const input4 = pane.addInput(PARAMS, 'GoroutinesCol');
@@ -231,8 +231,7 @@ function openFile(event) {
 			var text = reader.result;
 			var objJson = JSON.parse(text);
 			jsonArray = objJson;
-			// drawText("Drawing", font, 0, 0, 0, 3, 0.5, GNAME_COLOR);
-			Notiflix.Notify.Success('Drawing');
+			Notiflix.Loading.Hourglass('Drawing...');
 			resetScene();
 			setTimeout(loadJson, 100);
 		};
@@ -345,9 +344,13 @@ function loadJson() {
 					var children = findChildren(g);
 					g.setChildren(children);
 		}
-		setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
-		setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
-		setTimeout(function(){drawCommunication();}, 100);
+		// setTimeout(function(){setDepths(getGoroutineById(1), 0);}, 100);
+		// setTimeout(function(){drawAllGoroutines(getGoroutineById(1));}, 100);
+		// setTimeout(function(){drawCommunication();}, 100);
+
+		setDepths(getGoroutineById(1), 0);
+		drawAllGoroutines(getGoroutineById(1));
+		drawCommunication();
 
 		var mainGoroutine = goroutines[0];
 		var start = mainGoroutine.vecStart;
@@ -358,6 +361,8 @@ function loadJson() {
 
 		camera.lookAt(0, -(max_len), 0);
 		setControls();
+
+		Notiflix.Loading.Remove(50);
 }
 
 function setDepths(g, d) {
