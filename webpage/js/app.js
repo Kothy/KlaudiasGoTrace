@@ -417,8 +417,8 @@ function loadJson() {
 						var sleepDuration = obj.Duration;
 						var endSleep = startSleep + sleepDuration;
 
-						startSleep += (sleepDuration/8);
-						endSleep -= (sleepDuration/8);
+						startSleep += (sleepDuration/100);
+						// endSleep -= (sleepDuration/15);
 
 						var startY = calculateYFromTime(startSleep);
 						var endY = calculateYFromTime(endSleep);
@@ -428,8 +428,8 @@ function loadJson() {
 						var startBlock = obj.Time;
 						var blockDuration = obj.Duration;
 						var endBlock = startBlock + blockDuration;
-						startBlock += (blockDuration/8);
-						endBlock -= (blockDuration/8);
+						startBlock += (blockDuration/100);
+						// endBlock -= (blockDuration/15);
 
 						var startY = calculateYFromTime(startBlock);
 						var endY = calculateYFromTime(endBlock);
