@@ -18,6 +18,7 @@ import (
 )
 
 var traceFileName string
+var outputDir string
 var commands []*Command
 var channels []*Chan
 var sleeps = make(map[int64]int64)
@@ -201,6 +202,10 @@ func endGoroutinesManually(goroutines map[int64]bool, commands []*Command, mainE
 	return commands
 }
 
+func SetOutputDirectory(directory string) {
+	outputDir = directory
+}
+
 func toJson(events []*Event) {
 	goroutines := make(map[int64]bool)
 	gParents := make(map[int64]int64)
@@ -237,10 +242,8 @@ func toJson(events []*Event) {
 					}
 				}
 			} else if strings.Contains(command, "GoroutineSend") || strings.Contains(command, "GoroutineReceive") {
-
 				channel := event.strArgs[0][:10]
 				value := event.strArgs[0][11:]
-
 				if value == "<nil>" {
 					value = "nil"
 				}
@@ -255,9 +258,11 @@ func toJson(events []*Event) {
 				commands = append(commands, &cmd)
 			}
 		} else if event.Name == "GoSleep" {
+			//fmt.Printf("%+v\n", event)
 			sleeps[gId] = event.Timestmp
 
 		} else if event.Name == "GoStart" {
+			//fmt.Printf("%+v\n", event)
 			if sleeps[gId] > 0 && ok {
 				cmd := Command{
 					Time:     sleeps[gId],
@@ -270,11 +275,13 @@ func toJson(events []*Event) {
 
 			}
 		} else if event.Name == "GoBlockRecv" || event.Name == "GoBlockSend" {
+			//fmt.Printf("%+v\n", event)
 			if ok {
 				blocks[gId] = event.Timestmp
 			}
 
 		} else if event.Name == "GoUnblock" {
+			//fmt.Printf("%+v\n", event)
 			_, ok2 := blocks[gId]
 			if ok && ok2 {
 
@@ -299,8 +306,16 @@ func toJson(events []*Event) {
 }
 
 func writeJson(json string) {
-	f, err := os.Create(traceFileName + ".json")
+	_, err3 := os.Stat("jsons")
 
+	if os.IsNotExist(err3) {
+		errDir := os.MkdirAll("jsons", 0755)
+		if errDir != nil {
+			log.Fatal(err3)
+		}
+	}
+
+	f, err := os.Create("jsons/" + traceFileName + ".json")
 	if err != nil {
 		log.Fatal(err)
 	}

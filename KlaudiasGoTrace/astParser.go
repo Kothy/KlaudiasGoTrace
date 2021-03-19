@@ -341,13 +341,24 @@ func createFileFromAST(filename string, data string) string {
 	postfix := "Parsed.go"
 	fileName := strings.ReplaceAll(filename, ".go", postfix)
 
-	for !writeToFile(fileName, data) {
+	_, err := os.Stat("parsed")
+
+	if os.IsNotExist(err) {
+		errDir := os.MkdirAll("parsed", 0755)
+		if errDir != nil {
+			log.Fatal(err)
+		}
+	}
+	filename = "parsed/" + fileName
+	fileName = "parsed/" + fileName
+
+	for !writeToFile(filename, data) {
 		fileVersion += 1
 		postfix = strings.ReplaceAll(formatPostfix, "_", strconv.Itoa(fileVersion))
 		fileName = strings.ReplaceAll(filename, ".go", postfix)
 	}
 
-	return fileName
+	return filename
 }
 
 func anonymFunctions() {

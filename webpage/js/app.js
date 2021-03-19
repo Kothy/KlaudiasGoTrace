@@ -8,6 +8,7 @@ var goroutinesObjs = [];
 var sleepsObjs = [];
 var parentsObjs = [];
 var blockObjs = [];
+var messagesObjs = [];
 var objects = [];
 var scene;
 var renderer;
@@ -16,6 +17,8 @@ var ambientLight;
 var controls;
 var loader;
 var font;
+var width;
+var height;
 
 
 let spinner = null;
@@ -34,11 +37,13 @@ let THICKNESS2 = 0.007;
 let THICKNESS3 = THICKNESS + 0.005;
 let MAXLEN = 10;
 let arrowsCheck = true;
+let messagesCheck = true;
 let namesCheck = true;
 let sleepsCheck = false;
 let blocksCheck = false;
 let PARAMS = {
 		Arrows: true,
+		Messages: true,
 		Names: true,
 		Sleeps: false,
 		Blocks: false,
@@ -147,17 +152,32 @@ function mainApp(){
 		// font = loader.parse(cambriaMathFont);
 		font = loader.parse(cambriaFont);
 
+		window.addEventListener('resize', onWindowResize);
+
 		createSettings();
 		drawScene();
+}
+
+function onWindowResize() {
+		width = window.innerWidth;
+		height = window.innerHeight - WINDOW_CUT;
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
+		renderer.setSize(width, height);
 }
 
 function createSettings(){
 
 	const pane = new Tweakpane({title: "Settings"});
-	const input = pane.addInput(PARAMS, 'Arrows');
 
+	const input = pane.addInput(PARAMS, 'Arrows');
 	input.on('change', function(ev) {
 			checkboxCommunication(ev.value);
+	});
+
+	const input12 = pane.addInput(PARAMS, 'Messages');
+	input12.on('change', function(ev) {
+			checkboxMessages(ev.value);
 	});
 
 	const input2 = pane.addInput(PARAMS, 'Names');
@@ -244,6 +264,13 @@ function checkboxCommunication(value){
 					commObjs[i].visible = value;
 		}
 		arrowsCheck = value;
+}
+
+function checkboxMessages(value){
+		for (var i = 0; i < messagesObjs.length; i++) {
+					messagesObjs[i].visible = value;
+		}
+		messagesCheck = value;
 }
 
 function checkboxNames(value){
@@ -453,6 +480,7 @@ function loadJson() {
 		drawCommunication();
 
 		checkboxSleeps(sleepsCheck);
+		checkboxMessages(messagesCheck);
 		checkboxNames(namesCheck);
 		checkboxCommunication(arrowsCheck);
 		checkboxBlocks(blocksCheck);
@@ -622,10 +650,12 @@ function drawCommunication() {
 						objs = drawArrowWithText(arrOrigin, arrTip, ARROW_COLOR, recValue);
 						commObjs.push(objs[0]);
 						commObjs.push(objs[1]);
+						messagesObjs.push(objs[1]);
 				} else {
 						var obj;
 						obj = drawText(recValue, font, arrTip.x, tipY, arrTip.z, 0.2, 0.003, ARROW_COLOR);
 						commObjs.push(obj);
+						messagesObjs.push(obj);
 				}
 
 			}
@@ -797,7 +827,7 @@ function setRenderer(){
 function setCamera(){
 	width = window.innerWidth;
 	height = window.innerHeight - WINDOW_CUT;
-	var camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 1000);
+	var camera = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
 	// camera.position.z = -6;
 	// camera.position.y = -4;
 	// camera.lookAt(0, 0, 6);

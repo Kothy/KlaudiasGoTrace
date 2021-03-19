@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func getPathAndTraceFile() {
@@ -15,8 +16,11 @@ func getPathAndTraceFile() {
 	if err != nil {
 		fmt.Println("Error:", err)
 	} else {
-		//KlaudiasGoTrace.Parse(filepath)
-
+		arrDir := strings.Split(strings.ReplaceAll(filepath, "\\", "/"), "/")
+		arrDir = arrDir[:len(arrDir)-1]
+		dir := strings.Join(arrDir[:], "/")
+		//fmt.Println(dir)
+		KlaudiasGoTrace.SetOutputDirectory(dir)
 		parsedProgram := KlaudiasGoTrace.Parse(filepath)
 		cmd := exec.Command("go", "run", parsedProgram)
 		cmd.Stdout = os.Stdout
@@ -36,6 +40,7 @@ func getPathAndTraceFile() {
 			//}
 		}
 	}
+
 }
 
 func main() {
