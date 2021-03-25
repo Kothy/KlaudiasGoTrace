@@ -3,6 +3,7 @@ package KlaudiasGoTrace
 import (
 	"bytes"
 	"fmt"
+	"github.com/go-toolsmith/astcopy"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -104,6 +105,15 @@ func contains(slice []string, value string) bool {
 	return false
 }
 
+func containsInter(slice []ast.Expr, value ast.Expr) bool {
+	for _, item := range slice {
+		if toString(fset, item) == toString(fset, value) {
+			return true
+		}
+	}
+	return false
+}
+
 func indexOf(element interface{}, data []ast.Stmt) int {
 	for k, v := range data {
 		if element == v {
@@ -171,8 +181,22 @@ func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
 				if ok && chrecv.Op.String() == "<-" {
 					index := indexOf(cursor2.Parent(), block.List)
 					if index >= 0 {
-						values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
-						recv = append(recv, values)
+						// ak to nebude fungovat zakomentuj blok
+						if reflect.TypeOf(cursor2.Parent()).String() == "*ast.AssignStmt" {
+							expr := cursor2.Parent().(*ast.AssignStmt)
+							expr2 := astcopy.AssignStmt(expr)
+							if len(expr.Lhs) > 0 {
+								expr2.Lhs = expr2.Lhs[:1]
+							}
+							values := []string{strconv.Itoa(index), toString(fset, expr2)}
+							recv = append(recv, values)
+						} else {
+							values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
+							recv = append(recv, values)
+						}
+
+						//values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
+						//recv = append(recv, values)
 					}
 				}
 				return true
@@ -252,7 +276,9 @@ func addExprToCall(callEx *ast.CallExpr) {
 
 func addExprToCallGID(callEx *ast.CallExpr) {
 	expr, _ := parser.ParseExpr("KlaudiasGoTrace.GetGID()")
-	callEx.Args = append(callEx.Args, expr)
+	if !containsInter(callEx.Args, expr) {
+		callEx.Args = append(callEx.Args, expr)
+	}
 }
 
 func fullFillFuncArrays(node ast.Node) {

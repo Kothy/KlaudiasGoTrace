@@ -410,7 +410,10 @@ function loadJson() {
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
 						var message = chan.pop();
-						g2.addReceived([message[2], obj.Time, value, message[0]]);
+						if (message) {
+							g2.addReceived([message[2], obj.Time, value, message[0]]);
+						}
+
 				} else if (obj.Command === "GoroutineSleep") {
 						var g = getGoroutineById(obj.Id);
 						var startSleep = obj.Time;

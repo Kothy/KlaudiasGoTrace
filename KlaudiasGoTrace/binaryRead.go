@@ -77,21 +77,7 @@ type Event struct {
 	stack      []*Frame  // stack trace (can be empty)
 	args       [3]uint64 // event-type-specific arguments
 	strArgs    []string  // event-type-specific string args
-	// linked event (can be nil), depends on event type:
-	// for GCStart: the GCStop
-	// for GCSTWStart: the GCSTWDone
-	// for GCSweepStart: the GCSweepDone
-	// for GoCreate: first GoStart of the created goroutine
-	// for GoStart/GoStartLabel: the associated GoEnd, GoBlock or other blocking event
-	// for GoSched/GoPreempt: the next GoStart
-	// for GoBlock and other blocking events: the unblock event
-	// for GoUnblock: the associated GoStart
-	// for blocking GoSysCall: the associated GoSysExit
-	// for GoSysExit: the next GoStart
-	// for GCMarkAssistStart: the associated GCMarkAssistDone
-	// for UserTaskCreate: the UserTaskEnd
-	// for UserRegion: if the start region, the corresponding UserRegion end event
-	Link *Event
+	Link       *Event
 }
 
 // Frame is a frame in stack traces.
@@ -213,8 +199,8 @@ var EventDescriptions = [EvCount]struct {
 	EvUserTaskEnd:       {"UserTaskEnd", 1011, true, []string{"taskid"}, nil},
 	EvUserRegion:        {"UserRegion", 1011, true, []string{"taskid", "mode", "typeid"}, []string{"Name"}},
 	EvUserLog:           {"UserLog", 1011, true, []string{"id", "keyid"}, []string{"category", "message"}},
-	EvGoSend:            {"GoSend", 1006, false, []string{"eip", "cid", "val"}, nil}, // toto si mozno uz on dolnil ??
-	EvGoRecv:            {"GoRecv", 1006, false, []string{"eid", "cid", "val"}, nil}, // toto si mozno uz on dolnil ??
+	EvGoSend:            {"GoSend", 1006, false, []string{"eip", "cid", "val"}, nil},
+	EvGoRecv:            {"GoRecv", 1006, false, []string{"eid", "cid", "val"}, nil},
 }
 
 type rawEvent struct {

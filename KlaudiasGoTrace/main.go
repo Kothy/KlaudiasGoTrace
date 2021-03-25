@@ -156,9 +156,7 @@ func ReceiveFromChannel(value interface{}, channel interface{}) interface{} {
 		return nil
 	}
 	chanName := findChannel(channel)
-
 	Log(chanName+"_"+fmt.Sprintf("%v", value), "GoroutineReceive")
-
 	return value
 }
 
@@ -274,13 +272,15 @@ func toJson(events []*Event) {
 				sleeps[gId] = 0
 
 			}
-		} else if event.Name == "GoBlockRecv" || event.Name == "GoBlockSend" {
+			//} else if event.Name == "GoBlockRecv" || event.Name == "GoBlockSend" {
+		} else if strings.Contains(event.Name, "GoBlock") {
 			//fmt.Printf("%+v\n", event)
 			if ok {
 				blocks[gId] = event.Timestmp
 			}
 
-		} else if event.Name == "GoUnblock" {
+			//} else if event.Name == "GoUnblock" {
+		} else if strings.Contains(event.Name, "GoUnblock") {
 			//fmt.Printf("%+v\n", event)
 			_, ok2 := blocks[gId]
 			if ok && ok2 {
