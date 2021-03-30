@@ -148,16 +148,6 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 	})
 }
 
-func addReceive(node ast.Node) {
-	ast.Inspect(node, func(n ast.Node) bool {
-		chrecv, ok := n.(*ast.UnaryExpr)
-		if ok && chrecv.Op.String() == "<-" {
-			fmt.Println(toString(fset, chrecv))
-		}
-		return true
-	})
-}
-
 func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
 	astutil.Apply(funDecl, func(cursor *astutil.Cursor) bool {
 		block, ok := cursor.Node().(*ast.BlockStmt)
@@ -409,7 +399,6 @@ func Parse(filePath string) string {
 	fullFillFuncArrays(root)
 	astutil.AddImport(fset, root, "KlaudiasGoTrace/KlaudiasGoTrace")
 
-	addReceive(root)
 	ast.Inspect(root, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
 		if ok {
