@@ -3,7 +3,6 @@ package KlaudiasGoTrace
 import (
 	"bytes"
 	"fmt"
-	"github.com/go-toolsmith/astcopy"
 	"go/ast"
 	"go/parser"
 	"go/printer"
@@ -37,19 +36,6 @@ func printTree(fset *token.FileSet, file *ast.File) {
 	//printer.Fprint(os.Stdout, fset, file)
 	fmt.Println(toString(fset, file))
 }
-
-//func newCallExpr(exp string) *ast.CallExpr {
-//
-//	funex, _ := parser.ParseExpr(exp)
-//	expr := ast.CallExpr{
-//		Fun:      funex,
-//		Lparen:   0,
-//		Args:     nil,
-//		Ellipsis: 0,
-//		Rparen:   0,
-//	}
-//	return &expr
-//}
 
 func newField(name string, typ string) *ast.Field {
 	field := &ast.Field{
@@ -99,15 +85,6 @@ func reverse(s interface{}) {
 func contains(slice []string, value string) bool {
 	for _, item := range slice {
 		if item == value {
-			return true
-		}
-	}
-	return false
-}
-
-func containsInter(slice []ast.Expr, value ast.Expr) bool {
-	for _, item := range slice {
-		if toString(fset, item) == toString(fset, value) {
 			return true
 		}
 	}
@@ -171,6 +148,16 @@ func addSendToFuncDecl(funDecl *ast.FuncDecl) {
 	})
 }
 
+func addReceive(node ast.Node) {
+	ast.Inspect(node, func(n ast.Node) bool {
+		chrecv, ok := n.(*ast.UnaryExpr)
+		if ok && chrecv.Op.String() == "<-" {
+			fmt.Println(toString(fset, chrecv))
+		}
+		return true
+	})
+}
+
 func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
 	astutil.Apply(funDecl, func(cursor *astutil.Cursor) bool {
 		block, ok := cursor.Node().(*ast.BlockStmt)
@@ -181,22 +168,8 @@ func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
 				if ok && chrecv.Op.String() == "<-" {
 					index := indexOf(cursor2.Parent(), block.List)
 					if index >= 0 {
-						// ak to nebude fungovat zakomentuj blok
-						if reflect.TypeOf(cursor2.Parent()).String() == "*ast.AssignStmt" {
-							expr := cursor2.Parent().(*ast.AssignStmt)
-							expr2 := astcopy.AssignStmt(expr)
-							if len(expr.Lhs) > 0 {
-								expr2.Lhs = expr2.Lhs[:1]
-							}
-							values := []string{strconv.Itoa(index), toString(fset, expr2)}
-							recv = append(recv, values)
-						} else {
-							values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
-							recv = append(recv, values)
-						}
-
-						//values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
-						//recv = append(recv, values)
+						values := []string{strconv.Itoa(index), toString(fset, cursor2.Parent())}
+						recv = append(recv, values)
 					}
 				}
 				return true
@@ -211,6 +184,10 @@ func addReceiveToFuncDecl(funDecl *ast.FuncDecl) {
 					if varName == "" {
 						withoutVar = true
 						varName = "<-" + chanName
+					}
+					if strings.Contains(varName, ",") {
+						index := strings.Index(varName, ",")
+						varName = varName[:index]
 					}
 					exprStr := fmt.Sprintf("KlaudiasGoTrace.ReceiveFromChannel(%s, %s)", varName, chanName)
 					expr, _ := parser.ParseExpr(exprStr)
@@ -276,9 +253,7 @@ func addExprToCall(callEx *ast.CallExpr) {
 
 func addExprToCallGID(callEx *ast.CallExpr) {
 	expr, _ := parser.ParseExpr("KlaudiasGoTrace.GetGID()")
-	if !containsInter(callEx.Args, expr) {
-		callEx.Args = append(callEx.Args, expr)
-	}
+	callEx.Args = append(callEx.Args, expr)
 }
 
 func fullFillFuncArrays(node ast.Node) {
@@ -323,6 +298,7 @@ func addImport(importString string) {
 	ast.Inspect(root, func(n ast.Node) bool {
 		genDecl, ok := n.(*ast.GenDecl)
 		if ok {
+
 			if genDecl.Tok == token.IMPORT {
 				iSpec := &ast.ImportSpec{Path: &ast.BasicLit{Value: strconv.Quote(importString)}}
 				genDecl.Specs = append(genDecl.Specs, iSpec)
@@ -431,8 +407,9 @@ func Parse(filePath string) string {
 	fileName = results[len(results)-1]
 
 	fullFillFuncArrays(root)
-	addImport("KlaudiasGoTrace/KlaudiasGoTrace")
+	astutil.AddImport(fset, root, "KlaudiasGoTrace/KlaudiasGoTrace")
 
+	addReceive(root)
 	ast.Inspect(root, func(n ast.Node) bool {
 		funDecl, ok := n.(*ast.FuncDecl)
 		if ok {

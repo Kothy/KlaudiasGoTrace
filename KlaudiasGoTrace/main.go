@@ -210,7 +210,7 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 
 	for _, event := range events {
-		//fmt.Printf("%+v\n", event)
+		fmt.Printf("%+v\n", event)
 		gId := int64(event.GorutineId)
 		_, ok := goroutines[gId]
 		if event.Name == "UserLog" {
