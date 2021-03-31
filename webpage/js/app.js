@@ -656,13 +656,54 @@ function drawCommunication() {
 						messagesObjs.push(objs[1]);
 				} else {
 						var obj;
+						var circArrow = [];
 						obj = drawText(recValue, font, arrTip.x, tipY, arrTip.z, 0.2, 0.003, ARROW_COLOR);
+						circArrow = drawCircleArrow(arrTip.x, tipY, arrTip.z, ARROW_COLOR, 0.35, 0.01);
 						commObjs.push(obj);
+						commObjs.push(circArrow[0]);
+						commObjs.push(circArrow[1]);
+						commObjs.push(circArrow[2]);
 						messagesObjs.push(obj);
 				}
 
 			}
 	}
+}
+
+function drawCircleArrow(x, y, z, color, r, h) {
+		var radius   = r, segments = 32;
+  	var material = new THREE.LineBasicMaterial({color: color});
+  	var geometry = new THREE.CircleGeometry(radius, segments);
+
+		geometry.vertices.shift();
+
+		var line = new THREE.Line(geometry, material);
+		var lineLoop = new THREE.LineLoop(geometry, material);
+
+		line.rotation.x += toRadians(90);
+		lineLoop.rotation.x += toRadians(90);
+
+		line.position.x = x;
+		line.position.y = y;
+		line.position.z = z;
+
+		lineLoop.position.x = x;
+		lineLoop.position.y = y;
+		lineLoop.position.z = z;
+
+		scene.add(line);
+		scene.add(lineLoop);
+
+		const geometry2 = new THREE.ConeGeometry(0.05, 0.3, 32);
+		const material2 = new THREE.MeshBasicMaterial( {color: color} );
+		const cone = new THREE.Mesh(geometry2, material2);
+
+		cone.position.x = x-r+(0.015/2);
+		cone.position.y = y;
+		cone.position.z = z;
+		cone.rotation.x += toRadians(90);
+		scene.add(cone);
+		return [cone, line, lineLoop];
 }
 
 function getGoroutineById(id) {
