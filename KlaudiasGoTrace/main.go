@@ -210,7 +210,7 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 
 	for _, event := range events {
-		fmt.Printf("%+v\n", event)
+		//fmt.Printf("%+v\n", event)
 		gId := int64(event.GorutineId)
 		_, ok := goroutines[gId]
 		if event.Name == "UserLog" {
@@ -316,6 +316,9 @@ func writeJson(json string) {
 	}
 
 	f, err := os.Create("jsons/" + traceFileName + ".json")
+	//fmt.Println(strings.ReplaceAll(json, "\"", "'"))
+	fmt.Println(json)
+	fmt.Print(strings.Count(json, "\n"))
 	if err != nil {
 		log.Fatal(err)
 	}

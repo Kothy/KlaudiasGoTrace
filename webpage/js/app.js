@@ -371,6 +371,15 @@ function sleep(sleepDuration){
     while(new Date().getTime() < now + sleepDuration){}
 }
 
+function jsonFromHtml() {
+	var text = document.getElementById('myJson').textContent;
+	var objJson = JSON.parse(text);
+	jsonArray = objJson;
+	Notiflix.Loading.Hourglass('Drawing...');
+	resetScene();
+	setTimeout(loadJson, 100);
+}
+
 function loadJson() {
 
 			goroutines = [];
@@ -476,6 +485,7 @@ function loadJson() {
 					}
 					var children = findChildren(g);
 					g.setChildren(children);
+					g.children.sort(function (item1, item2) { return item1.id - item2.id });
 		}
 
 		setDepths(getGoroutineById(1), 0);
@@ -597,7 +607,6 @@ function drawAllGoroutines(g) {
 		namesObjs.push(nameObj);
 
 		var deg = 1 + Math.floor(Math.random() * 359);
-		g.children.sort(function (item1, item2) { return item1.id - item2.id });
 		for (var i = 0; i < g.children.length; i++) {
 				childrenNum = g.children.length
 				if (childrenNum == 2) {
