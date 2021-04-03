@@ -41,6 +41,7 @@ let messagesCheck = true;
 let namesCheck = true;
 let sleepsCheck = false;
 let blocksCheck = false;
+let container, stats;
 let PARAMS = {
 		Arrows: true,
 		Messages: true,
@@ -143,10 +144,11 @@ function mainApp(){
 
 		scene = setScene();
 		renderer = setRenderer();
+		ambientLight = setLight();
 		camera = setCamera();
 		controls = setControls();
 		setWindow();
-		ambientLight = setLight();
+
 
 		loader = new THREE.FontLoader();
 		// font = loader.parse(cambriaMathFont);
@@ -500,10 +502,18 @@ function loadJson() {
 
 		camera.position.set(0, -max_len, 25);
 
-		camera.lookAt(0, -(max_len), 0);
+		camera.lookAt(0, -(max_len) * 2, 2);
 		setControls();
 
+		moveAllObjects(max_len/2);
+
 		Notiflix.Loading.Remove(50);
+}
+
+function moveAllObjects(dy) {
+	for (var i = 0; i < objects.length; i++) {
+		objects[i].position.y += dy;
+	}
 }
 
 function setDepths(g, d) {
@@ -672,6 +682,7 @@ function drawCommunication() {
 						commObjs.push(circArrow[0]);
 						commObjs.push(circArrow[1]);
 						commObjs.push(circArrow[2]);
+						objects.push(circArrow[0], circArrow[1], circArrow[2]);
 						messagesObjs.push(obj);
 				}
 
@@ -829,21 +840,24 @@ function createText(text, font, x, y, z, size, height, color){
 }
 
 function setControls(){
-	var orbControls;
-	orbControls = new THREE.OrbitControls(camera, renderer.domElement);
-	return orbControls;
+		var orbControls;
+		orbControls = new THREE.OrbitControls(camera, renderer.domElement);
+
+		orbControls.maxPolarAngle = Math.PI * 0.5;
+		orbControls.minDistance = 0;
+		orbControls.maxDistance = 50;
+
+		return orbControls;
 }
 
 function drawScene(){
-
 	var update = function(){
-
 		texts.forEach((item, i) => {
+			controls.update();
 			item.rotation.x = camera.rotation.x;
 			item.rotation.y = camera.rotation.y;
 			item.rotation.z = camera.rotation.z;
 		});
-
 	};
 	// draw scene
 	var render = function(){
@@ -855,7 +869,6 @@ function drawScene(){
 		requestAnimationFrame(GameLoop);
 		update();
 		render();
-
 	};
 	GameLoop();
 }
@@ -881,9 +894,7 @@ function setCamera(){
 	width = window.innerWidth;
 	height = window.innerHeight - WINDOW_CUT;
 	var camera = new THREE.PerspectiveCamera(100, width / height, 0.1, 1000);
-	// camera.position.z = -6;
-	// camera.position.y = -4;
-	// camera.lookAt(0, 0, 6);
+
 	return camera;
 }
 
