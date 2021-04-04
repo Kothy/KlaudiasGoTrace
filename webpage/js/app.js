@@ -409,14 +409,12 @@ function loadJson() {
 					if (max_len < Math.abs(g.len)) {
 						max_len = Math.abs(g.len)
 					}
-				}
-				else if (obj.Command === "GoroutineSend"){
+				} else if (obj.Command === "GoroutineSend"){
 						var chan = getChannel(obj.Channel);
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
 						chan.push([g2, value, obj.Time]);
-				}
-				else if (obj.Command === "GoroutineReceive"){
+				} else if (obj.Command === "GoroutineReceive"){
 						var chan = getChannel(obj.Channel);
 						var g2 = getGoroutineById(obj.Id);
 						var value = obj.Value;
@@ -424,16 +422,12 @@ function loadJson() {
 						if (message) {
 							g2.addReceived([message[2], obj.Time, value, message[0]]);
 						}
-
 				} else if (obj.Command === "GoroutineSleep") {
 						var g = getGoroutineById(obj.Id);
 						var startSleep = obj.Time;
 						var sleepDuration = obj.Duration;
 						var endSleep = startSleep + sleepDuration;
-
 						startSleep += (sleepDuration/100);
-						// endSleep -= (sleepDuration/15);
-
 						var startY = calculateYFromTime(startSleep);
 						var endY = calculateYFromTime(endSleep);
 						g.addSleep([startY, endY]);
@@ -443,8 +437,6 @@ function loadJson() {
 						var blockDuration = obj.Duration;
 						var endBlock = startBlock + blockDuration;
 						startBlock += (blockDuration/100);
-						// endBlock -= (blockDuration/15);
-
 						var startY = calculateYFromTime(startBlock);
 						var endY = calculateYFromTime(endBlock);
 						g.addBlock([startY, endY]);
@@ -685,7 +677,6 @@ function drawCommunication() {
 						objects.push(circArrow[0], circArrow[1], circArrow[2]);
 						messagesObjs.push(obj);
 				}
-
 			}
 	}
 }
@@ -914,60 +905,12 @@ function setLight(){
 	var ambientLight = new THREE.AmbientLight(0xffffff,1.0);
 	scene.add(ambientLight);
 	return ambientLight;
-
-	// const color = 0xFFFFFF;
-	// const intensity = 4;
-	// const light = new THREE.DirectionalLight(color, intensity);
-	// light.position.set(0, 10, 0);
-	// light.target.position.set(0, -10, 0);
-	// scene.add(light);
-	// scene.add(light.target);
-	//
-	// const light1 = new THREE.DirectionalLight(color, intensity);
-	// light1.position.set(0, 1, 0);
-	// light1.target.position.set(1, 1, 1);
-	// scene.add(light1);
-	// scene.add(light1.target);
-	//
-	// const light2 = new THREE.DirectionalLight(color, intensity);
-	// light2.position.set(0, -1, 0);
-	// light2.target.position.set(-1, 1, -1);
-	// scene.add(light2);
-	// scene.add(light1.target);
-
-	// const color = 0xFFFFFF;
-  //   const intensity = 1;
-  //   const light = new THREE.PointLight(color, intensity);
-  //   light.position.set(0, 5, 0);
-	//
-	// 	const helper = new THREE.PointLightHelper(light);
-  //   scene.add(helper);
-	//
-	// 	const light2 = new THREE.PointLight(color, intensity);
-  //   light2.position.set(-2, 20, -3);
-	//
-	// 	const light3 = new THREE.PointLight(color, intensity);
-  //   light3.position.set(2, 20, 3);
-	//
-	// 	const light4 = new THREE.PointLight(color, intensity);
-  //   light4.position.set(2, -20, 3);
-	//
-	// 	const light5 = new THREE.PointLight(color, intensity);
-  //   light5.position.set(-2, -20, -3);
-	//
-	// 	const light6 = new THREE.PointLight(color, 3);
-  //   light6.position.set(0, 0, 0);
-	//
-  //   scene.add(light, light2, light3, light4, light5, light6);
-
-	return light;
 }
 
 function getRandomColor() {
 	var letters = '0123456789ABCDEF';
 	var color = '#';
 	for (var i = 0; i < 6; i++) {
-		//color += letters[Math.floor(Math.random() * 16)];
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;

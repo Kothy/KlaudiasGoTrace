@@ -39,9 +39,6 @@ type Command struct {
 	Channel  string      `json:"Channel"`
 	Value    interface{} `json:"Value"`
 	Duration int64       `json:"Duration"`
-	//From     string      `json:"From"`
-	//To       string      `json:"To"`
-	//EventID  string      `json:"EventID"`
 }
 
 func StartTrace() {
@@ -210,7 +207,7 @@ func toJson(events []*Event) {
 	var mainEndCmd Command
 
 	for _, event := range events {
-		//fmt.Printf("%+v\n", event)
+		fmt.Printf("%+v\n", event)
 		gId := int64(event.GorutineId)
 		_, ok := goroutines[gId]
 		if event.Name == "UserLog" {
