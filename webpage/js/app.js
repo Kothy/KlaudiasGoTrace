@@ -19,6 +19,8 @@ var loader;
 var font;
 var width;
 var height;
+var time0;
+var time1;
 
 
 let spinner = null;
@@ -383,7 +385,7 @@ function jsonFromHtml() {
 }
 
 function loadJson() {
-
+			time0 = performance.now();
 			goroutines = [];
 			channels = new Map();
 			texts = [];
@@ -483,6 +485,7 @@ function loadJson() {
 		}
 
 		setDepths(getGoroutineById(1), 0);
+		console.log("Nacitanie skoncilo");
 		drawAllGoroutines(getGoroutineById(1));
 		drawCommunication();
 
@@ -498,6 +501,10 @@ function loadJson() {
 		setControls();
 
 		moveAllObjects(max_len/2);
+
+		time1 = performance.now();
+
+		console.log("Cas kreslenia: " + ((time1 - time0)/1000) + " seconds.");
 
 		Notiflix.Loading.Remove(50);
 }
@@ -682,7 +689,7 @@ function drawCommunication() {
 }
 
 function drawCircleArrow(x, y, z, color, r, h) {
-		var radius   = r, segments = 32;
+		var radius   = r, segments = 10;
   	var material = new THREE.LineBasicMaterial({color: color});
   	var geometry = new THREE.CircleGeometry(radius, segments);
 
@@ -705,7 +712,7 @@ function drawCircleArrow(x, y, z, color, r, h) {
 		scene.add(line);
 		scene.add(lineLoop);
 
-		const geometry2 = new THREE.ConeGeometry(0.05, 0.3, 32);
+		const geometry2 = new THREE.ConeGeometry(0.05, 0.3, 10);
 		const material2 = new THREE.MeshBasicMaterial( {color: color} );
 		const cone = new THREE.Mesh(geometry2, material2);
 
@@ -734,7 +741,7 @@ function drawLineWithThickness(pointX, pointY, thick, color) {
 	                0, 0, 1, 0,
 	                0, -1, 0, 0,
 	                0, 0, 0, 1));
-	  var edgeGeometry = new THREE.CylinderGeometry(thick, thick, direction.length(), 6);
+	  var edgeGeometry = new THREE.CylinderGeometry(thick, thick, direction.length(), 5);
 		var material = new THREE.MeshBasicMaterial({
 			color: color,
 		});
@@ -793,26 +800,6 @@ function drawText(text, font, x, y, z, size, height, color) {
 		texts.push(meshText);
 		return meshText;
 }
-
-// function drawTextSpin(text, size, height, color){
-// 		var geometryText = new THREE.TextGeometry(text,
-// 			{
-// 				font: font,
-// 				size: 1,
-// 				height: 0.5,
-// 			});
-//
-// 		geometryText.center();
-// 		var materialText = new THREE.MeshBasicMaterial({color: color});
-// 		var meshText = new THREE.Mesh(geometryText, materialText);
-//
-// 		meshText.position.y = 0;
-// 		meshText.position.x = 0;
-// 		meshText.position.z = 0;
-// 		// scene.add(meshText);
-//
-// 		return meshText;
-// }
 
 function createText(text, font, x, y, z, size, height, color){
 		var geometryText = new THREE.TextGeometry(text, {
