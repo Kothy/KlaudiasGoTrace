@@ -56,7 +56,7 @@ func getPathAndTraceFile() {
 			outSlice := strings.Split(string(out), "\n")
 			numberLines, _ := strconv.Atoi(outSlice[len(outSlice)-1])
 			outSlice = outSlice[(len(outSlice) - 2 - numberLines) : len(outSlice)-1]
-			fmt.Println(string(out))
+			//fmt.Println(string(out))
 
 			html = strings.ReplaceAll(html, "_", strings.Join(outSlice, "\n"))
 			writeFile(filepath2+"/webpage/index2.html", html)

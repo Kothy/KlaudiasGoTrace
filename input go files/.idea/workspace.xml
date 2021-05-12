@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="e37229da-5d58-4007-baef-32fe99efd2e7" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Go File" />
+      </list>
+    </option>
+  </component>
+  <component name="GOROOT" path="C:\Go" />
+  <component name="ProjectId" id="1pC7eru1DpZdBB2lhwUOEpBfkV9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultGoTemplateProperty" value="Go File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="go.import.settings.migrated" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../KlaudiasGoTrace" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\klaud\go\src\examplesWithoutAnot" />
+      <recent name="C:\Users\klaud\go\src\ASTparser" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\klaud\go\src\examplesWithoutAnot" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Go Build.go build examplesWithoutAnot">
+    <configuration name="go build examplesWithoutAnot" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="ASTparser" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="PACKAGE" />
+      <filePath value="$PROJECT_DIR$/problemVecerajucichFilozofov2.go" />
+      <package value="examplesWithoutAnot" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build problemVecerajucichFilozofov.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+      <module name="ASTparser" />
+      <working_directory value="$PROJECT_DIR$/" />
+      <kind value="FILE" />
+      <filePath value="$PROJECT_DIR$/problemVecerajucichFilozofov.go" />
+      <package value="examplesWithoutAnot" />
+      <directory value="$PROJECT_DIR$/" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build problemVecerajucichFilozofov.go" />
+      <item itemvalue="Go Build.go build examplesWithoutAnot" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Build.go build examplesWithoutAnot" />
+        <item itemvalue="Go Build.go build problemVecerajucichFilozofov.go" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1615311851822">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="414" y="179" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615311851822" />
+    <state x="2618" y="197" key="#go_build_ASTparser" timestamp="1615303914802">
+      <screen x="1920" y="3" width="1920" height="1040" />
+    </state>
+    <state x="698" y="194" key="#go_build_ASTparser/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1614675492903" />
+    <state x="2618" y="197" key="#go_build_ASTparser/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615303914802" />
+    <state x="686" y="185" key="#go_build_examplesWithoutAnot" timestamp="1618239264520">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="185" key="#go_build_examplesWithoutAnot/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1618239264520" />
+    <state x="2606" y="188" key="#go_build_examplesWithoutAnot/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1618235876998" />
+    <state x="686" y="193" key="#go_build_problemVecerajucichFilozofov.go" timestamp="1615311016189">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="193" key="#go_build_problemVecerajucichFilozofov.go/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615311016189" />
+    <state x="686" y="193" key="#go_build_problemVecerajucichFilozofov2.go" timestamp="1615311834594">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="686" y="193" key="#go_build_problemVecerajucichFilozofov2.go/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615311834594" />
+    <state x="740" y="279" key="FileChooserDialogImpl" timestamp="1618661842130">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="279" key="FileChooserDialogImpl/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1618661842130" />
+    <state x="2660" y="282" key="FileChooserDialogImpl/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615817246215" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom" timestamp="1615983070407">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615983070407" />
+    <state width="1877" height="282" key="GridCell.Tab.0.bottom/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615375916690" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center" timestamp="1615983070407">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615983070407" />
+    <state width="1877" height="282" key="GridCell.Tab.0.center/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615375916690" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left" timestamp="1615983070406">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615983070406" />
+    <state width="1877" height="282" key="GridCell.Tab.0.left/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615375916689" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right" timestamp="1615983070407">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1615983070407" />
+    <state width="1877" height="282" key="GridCell.Tab.0.right/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615375916690" />
+    <state x="2873" y="3" width="974" height="1047" maximized="true" key="dock-window-1" timestamp="1617106807022">
+      <screen x="1920" y="3" width="1920" height="1040" />
+    </state>
+    <state x="2873" y="3" width="974" height="1047" maximized="true" key="dock-window-1/0.0.1920.1040/1920.3.1920.1040@0.0.1920.1040" timestamp="1617106807022" />
+    <state x="295" y="31" width="1610" height="715" maximized="true" key="dock-window-1/0.0.1920.1040/1920.3.1920.1040@1920.3.1920.1040" timestamp="1615312138028" />
+  </component>
+</project>
